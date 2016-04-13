@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="PostgreSQL - novus@localhost" uuid="0b22aee8-d741-45be-928a-f09636e40258">
+      <secret-storage>master_key</secret-storage>
+      <user-name>novus_user</user-name>
+      <schema-pattern>novus.pg_catalog novus.public</schema-pattern>
+      <default-schemas>novus.public</default-schemas>
+    </data-source>
+  </component>
+</project>

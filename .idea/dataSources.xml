@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" hash="302828331">
+    <data-source source="LOCAL" name="PostgreSQL - novus@localhost" uuid="0b22aee8-d741-45be-928a-f09636e40258">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/novus</jdbc-url>
+    </data-source>
+  </component>
+</project>
