@@ -2,6 +2,7 @@
 
 namespace Novus\Http\Controllers\Auth;
 
+use Illuminate\Http\Request;
 use Novus\User;
 use Validator;
 use Novus\Http\Controllers\Controller;
@@ -47,9 +48,10 @@ class AuthController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|confirmed|min:6',
+            'first_name' => 'required|max:16',
+            'last_name' => 'required|max:16',
+            'email' => 'required|email|max:32|unique:users',
+            'password' => 'required|confirmed|min:8',
         ]);
     }
 
@@ -63,12 +65,13 @@ class AuthController extends Controller
     {
         $user = new User(\Request::all());
         $user = new User([
-            'name' => $data['name'],
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
 
         ]);
-        $user->role = 'user';
+        $user->role_id = '1';
         $user->save();
         return $user;
 
@@ -103,5 +106,16 @@ class AuthController extends Controller
 
         return property_exists($this, 'redirectTo') ? $this->redirectTo : '/home';*/
         return route('home');
+    }
+
+    /**
+     * Get the needed authorization credentials from the request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    protected function getCredentials(Request $request)
+    {
+        return $request->only($this->loginUsername(), 'password', 'status');
     }
 }

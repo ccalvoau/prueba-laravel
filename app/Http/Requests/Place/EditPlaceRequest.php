@@ -40,6 +40,8 @@ class EditPlaceRequest extends Request
             'street_type_id' => 'required|exists:street_types,id',
             'suburb' => 'required|alpha',
             'state_id' => 'required|exists:states,id',
+            'description' => 'max:255',
+            'status' => 'required|in:TRUE,FALSE',
         ];
     }
 }

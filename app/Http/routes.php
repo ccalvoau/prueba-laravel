@@ -11,67 +11,49 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+/*PATTERNS*/
+use Novus\Cleaner;
+use Novus\Role;
+use Novus\User;
 
-Route::get('home', [
-    'uses' => 'HomeController@index',
-    'as' => 'home'
-]);
 
-//Route::get('/', 'WelcomeController@index');
 
+Route::get('/', 'WelcomeController@index')->name('welcome');
+
+
+/*LOGIN*/
 // Authentication routes...
-Route::get('login', [
-    'uses' => 'Auth\AuthController@getLogin',
-    'as' => 'login',
-]);
+Route::get('login', 'Auth\AuthController@getLogin')->name('login');
 Route::post('login', 'Auth\AuthController@postLogin');
+Route::get('logout', 'Auth\AuthController@getLogout')->name('logout');
 
-Route::get('logout', [
-    'uses' => 'Auth\AuthController@getLogout',
-    'as' => 'logout',
-]);
+// Registration routes... (ONLY DEVELOPMENT)
+/*Route::get('register', 'Auth\AuthController@getRegister')->name('register');
+Route::post('register', 'Auth\AuthController@postRegister');*/
 
-// Registration routes...
-Route::get('register', [
-    'uses' => 'Auth\AuthController@getRegister',
-    'as' => 'register',
+// Password reset password link request routes...
+Route::get('password', 'Auth\PasswordController@getEmail')->name('password');
+Route::post('password', 'Auth\PasswordController@postEmail')->name('password');
 
-]);
-Route::post('register', 'Auth\AuthController@postRegister');
+// Password reset password routes...
+Route::get('reset/{token}/{email}', 'Auth\PasswordController@getReset')->name('reset/{token}/{email}');
+Route::post('reset', 'Auth\PasswordController@postReset')->name('reset');
 
-// Password reset link request routes...
-Route::get('password', [
-    'as' => 'password',
-    'uses' => 'Auth\PasswordController@getEmail'
-]);
+// Password set password link request (first time user) routes...
+Route::get('password_set/{email}', 'Auth\PasswordController@getSetEmail')->name('password_set/{email}');
+Route::post('password_set', 'Auth\PasswordController@postSetEmail')->name('password_set');
 
-Route::post('password', [
-    'as' => 'password',
-    'uses' => 'Auth\PasswordController@postEmail'
-]);
-
-// Password reset routes...
-Route::get('reset/{token}', [
-    'as' => 'reset/{token}',
-    'uses' => 'Auth\PasswordController@getReset'
-]);
-Route::post('reset', [
-    'as' => 'reset',
-    'uses' => 'Auth\PasswordController@postReset'
-]);
+// Password set password (first time user) routes...
+Route::get('set_password/{token}/{email}', 'Auth\PasswordController@getSetPassword')->name('set_password/{token}/{email}');
+Route::post('set_password', 'Auth\PasswordController@postSetPassword')->name('set_password');
 
 
+Route::group(['middleware'=>['auth']], function () {
 
+    Route::pattern('id', '\d+');
 
-
-Route::pattern('id', '\d+');
-
-Route::group(['middleware' => ['auth']], function () {
-
-    Route::resource('cleaners', 'CleanerController');
+    /*HOME*/
+    Route::get('home', 'HomeController@index')->name('home');
 
     /*
     // \Novus\Providers\AuthServiceProvider::
@@ -90,198 +72,204 @@ Route::group(['middleware' => ['auth']], function () {
     });
     */
 
-/*
-    Route::get('cleaners',
-        ['as' => 'cleaners', 'uses' => 'CleanerController@index']);
+    /*USERS*/
+    Route::group(['as'=>'users::', 'prefix'=>'users', 'middleware'=>'roles'], function() {
+        $controller_name = 'UserController';
 
-    Route::get('cleaners/create',
-        ['as' => 'cleaners/create', 'uses' => 'CleanerController@create']);*/
+        // INDEX
+        Route::get('/', ['uses'=>$controller_name.'@index', 'as'=>'index', 'roles'=>[1,2]]);
+        // CREATE
+        Route::get('/create', ['uses'=>$controller_name.'@create', 'as'=>'create', 'roles'=>[1,2]]);
+        // STORE
+        Route::post('/', ['uses'=>$controller_name.'@store', 'as'=>'store', 'roles'=>[1,2]]);
+        // SHOW
+        Route::get('/{id}', ['uses'=>$controller_name.'@show', 'as'=>'show', 'roles'=>[1,2]]);
+        // EDIT
+        Route::get('/{id}/edit', ['uses'=>$controller_name.'@edit', 'as'=>'edit', 'roles'=>[1,2]]);
+        // UPDATE
+        Route::put('/{id}/edit', ['uses'=>$controller_name.'@update', 'as'=>'update', 'roles'=>[1,2]]);
+        // DELETE
+        Route::delete('/{id}', ['uses'=>$controller_name.'@destroy', 'as'=>'destroy', 'roles'=>[1,2]]);
+    });
 
-    //Route::controller('crud', 'CrudController');
+    /*CLEANERS*/
+    Route::group(['as'=>'cleaners::', 'prefix'=>'cleaners', 'middleware'=>'roles'], function() {
+        $controller_name = 'CleanerController';
 
-    // LIST
-    Route::get('crud', [
-        'as' => 'crud.index',
-        'uses' => 'CrudController@index'
-    ]);
-    // CREATE
-    Route::get('crud/create', [
-        'as' => 'crud.create',
-        'uses' => 'CrudController@create'
-    ]);
-    // STORE
-    Route::post('crud', [
-        'as' => 'crud.store',
-        'uses' => 'CrudController@store'
-    ]);
-    // SHOW
-    Route::get('crud/{id}', [
-        'as' => 'crud.show',
-        'uses' => 'CrudController@show'
-    ]);
-    // EDIT
-    Route::get('crud/{id}/edit', [
-        'as' => 'crud.edit',
-        'uses' => 'CrudController@edit'
-    ]);
-    // UPDATE
-    Route::put('crud/{id}', [
-        'as' => 'crud.update',
-        'uses' => 'CrudController@update'
-    ]);
-    // DELETE
-    Route::delete('crud/{id}', [
-        'as' => 'crud.destroy',
-        'uses' => 'CrudController@destroy'
-    ]);
+        // INDEX
+        Route::get('/', ['uses'=>$controller_name.'@index', 'as'=>'index', 'roles'=>[1,2,3,4]]);
+        // CREATE
+        Route::get('/create', ['uses'=>$controller_name.'@create', 'as'=>'create', 'roles'=>[1,2]]);
+        // STORE
+        Route::post('/', ['uses'=>$controller_name.'@store', 'as'=>'store', 'roles'=>[1,2]]);
+        // SHOW
+        Route::get('/{id}', ['uses'=>$controller_name.'@show', 'as'=>'show', 'roles'=>[1,2,3,4]]);
+        // EDIT
+        Route::get('/{id}/edit', ['uses'=>$controller_name.'@edit', 'as'=>'edit', 'roles'=>[1,2,3,4]]);
+        // UPDATE
+        Route::put('/{id}/edit', ['uses'=>$controller_name.'@update', 'as'=>'update', 'roles'=>[1,2,3,4]]);
+        // DELETE
+        Route::delete('/{id}', ['uses'=>$controller_name.'@destroy', 'as'=>'destroy', 'roles'=>[1]]);
+    });
 
+    Route::get('users/{email}/user.json', function($email)
+    {
+        $response = User::where('email', $email)->get()->first();
+        return $response;
+    })->name('users/user.json');
+    
+    Route::get('cleaners/{email}/cleaner.json', function($email)
+    {
+        $response = Cleaner::where('email', $email)->get()->first();
+        return $response;
+    })->name('cleaners/cleaner.json');
+
+    Route::get('roles/cleaner.json', function()
+    {
+        $response = Role::whereNotIn('id', [1,2])->get()->pluck('name', 'id');
+        return $response;
+    })->name('roles/cleaner.json');
+
+    /*AVAILABILITIES*/
+    Route::group(['as'=>'availabilities::', 'prefix'=>'availabilities', 'middleware'=>'roles'], function() {
+        $controller_name = 'AvailabilityController';
+
+        // SHOW
+        Route::get('/{id}', ['uses'=>$controller_name.'@show', 'as'=>'show', 'roles'=>[1,3,4]]);
+        // EDIT
+        Route::get('/{id}/edit', ['uses'=>$controller_name.'@edit', 'as'=>'edit', 'roles'=>[1,3,4]]);
+        // UPDATE
+        Route::put('/{id}/edit', ['uses'=>$controller_name.'@update', 'as'=>'update', 'roles'=>[1,3,4]]);
+    });
 
     /*PAYMENT_INFOS*/
-    // LIST
-    Route::get('payment_infos', [
-        'as' => 'payment_infos.index',
-        'uses' => 'PaymentInfoController@index'
-    ]);
-    // CREATE
-    Route::get('payment_infos/create', [
-        'as' => 'payment_infos.create',
-        'uses' => 'PaymentInfoController@create'
-    ]);
-    // STORE
-    Route::post('payment_infos', [
-        'as' => 'payment_infos.store',
-        'uses' => 'PaymentInfoController@store'
-    ]);
-    // SHOW
-    Route::get('payment_infos/{id}', [
-        'as' => 'payment_infos.show',
-        'uses' => 'PaymentInfoController@show'
-    ]);
-    // EDIT
-    Route::get('payment_infos/{id}/edit', [
-        'as' => 'payment_infos.edit',
-        'uses' => 'PaymentInfoController@edit'
-    ]);
-    // UPDATE
-    Route::put('payment_infos/{id}/edit', [
-        'as' => 'payment_infos.update',
-        'uses' => 'PaymentInfoController@update'
-    ]);
-    // DELETE
-    Route::delete('payment_infos/{id}', [
-        'as' => 'payment_infos.destroy',
-        'uses' => 'PaymentInfoController@destroy'
-    ]);
-    
-    
-    /*CLIENTS*/
-    // LIST
-    Route::get('clients', [
-        'as' => 'clients.index',
-        'uses' => 'ClientController@index'
-    ]);
-    // CREATE
-    Route::get('clients/create', [
-        'as' => 'clients.create',
-        'uses' => 'ClientController@create'
-    ]);
-    // STORE
-    Route::post('clients', [
-        'as' => 'clients.store',
-        'uses' => 'ClientController@store'
-    ]);
-    // SHOW
-    Route::get('clients/{id}', [
-        'as' => 'clients.show',
-        'uses' => 'ClientController@show'
-    ]);
-    // EDIT
-    Route::get('clients/{id}/edit', [
-        'as' => 'clients.edit',
-        'uses' => 'ClientController@edit'
-    ]);
-    // UPDATE
-    Route::put('clients/{id}/edit', [
-        'as' => 'clients.update',
-        'uses' => 'ClientController@update'
-    ]);
-    // DELETE
-    Route::delete('clients/{id}', [
-        'as' => 'clients.destroy',
-        'uses' => 'ClientController@destroy'
-    ]);
+    Route::group(['as'=>'payment_infos::', 'prefix'=>'payment_infos', 'middleware'=>'roles'], function() {
+        $controller_name = 'PaymentInfoController';
 
+        // INDEX
+        Route::get('/', ['uses'=>$controller_name.'@index', 'as'=>'index', 'roles'=>[1,2,3,4]]);
+        // LIST
+        Route::get('/{id}/display', ['uses'=>$controller_name.'@display', 'as'=>'display', 'roles'=>[3,4]]);
+        // CREATE
+        Route::get('/create', ['uses'=>$controller_name.'@create', 'as'=>'create', 'roles'=>[1,2,3,4]]);
+        // STORE
+        Route::post('/', ['uses'=>$controller_name.'@store', 'as'=>'store', 'roles'=>[1,2,3,4]]);
+        // SHOW
+        Route::get('/{id}', ['uses'=>$controller_name.'@show', 'as'=>'show', 'roles'=>[1,2,3,4]]);
+        // EDIT
+        Route::get('/{id}/edit', ['uses'=>$controller_name.'@edit', 'as'=>'edit', 'roles'=>[1,2,3,4]]);
+        // UPDATE
+        Route::put('/{id}/edit', ['uses'=>$controller_name.'@update', 'as'=>'update', 'roles'=>[1,2,3,4]]);
+        // DELETE
+        Route::delete('/{id}', ['uses'=>$controller_name.'@destroy', 'as'=>'destroy', 'roles'=>[1]]);
+    });
+
+    /*CLIENTS*/
+    Route::group(['as'=>'clients::', 'prefix'=>'clients', 'middleware'=>'roles'], function() {
+        $controller_name = 'ClientController';
+
+        // INDEX
+        Route::get('/', ['uses'=>$controller_name.'@index', 'as'=>'index', 'roles'=>[1,2]]);
+        // CREATE
+        Route::get('/create', ['uses'=>$controller_name.'@create', 'as'=>'create', 'roles'=>[1,2]]);
+        // STORE
+        Route::post('/', ['uses'=>$controller_name.'@store', 'as'=>'store', 'roles'=>[1,2]]);
+        // SHOW
+        Route::get('/{id}', ['uses'=>$controller_name.'@show', 'as'=>'show', 'roles'=>[1,2]]);
+        // EDIT
+        Route::get('/{id}/edit', ['uses'=>$controller_name.'@edit', 'as'=>'edit', 'roles'=>[1,2]]);
+        // UPDATE
+        Route::put('/{id}/edit', ['uses'=>$controller_name.'@update', 'as'=>'update', 'roles'=>[1,2]]);
+        // DELETE
+        Route::delete('/{id}', ['uses'=>$controller_name.'@destroy', 'as'=>'destroy', 'roles'=>[1]]);
+    });
 
     /*PLACES*/
-    // LIST
-    Route::get('places', [
-        'as' => 'places.index',
-        'uses' => 'PlaceController@index'
-    ]);
-    // CREATE
-    Route::get('places/create', [
-        'as' => 'places.create',
-        'uses' => 'PlaceController@create'
-    ]);
-    // STORE
-    Route::post('places', [
-        'as' => 'places.store',
-        'uses' => 'PlaceController@store'
-    ]);
-    // SHOW
-    Route::get('places/{id}', [
-        'as' => 'places.show',
-        'uses' => 'PlaceController@show'
-    ]);
-    // EDIT
-    Route::get('places/{id}/edit', [
-        'as' => 'places.edit',
-        'uses' => 'PlaceController@edit'
-    ]);
-    // UPDATE
-    Route::put('places/{id}/edit', [
-        'as' => 'places.update',
-        'uses' => 'PlaceController@update'
-    ]);
-    // DELETE
-    Route::delete('places/{id}', [
-        'as' => 'places.destroy',
-        'uses' => 'PlaceController@destroy'
-    ]);
+    Route::group(['as'=>'places::', 'prefix'=>'places', 'middleware'=>'roles'], function() {
+        $controller_name = 'PlaceController';
 
+        // INDEX
+        Route::get('/', ['uses'=>$controller_name.'@index', 'as'=>'index', 'roles'=>[1,2]]);
+        // CREATE
+        Route::get('/create', ['uses'=>$controller_name.'@create', 'as'=>'create', 'roles'=>[1,2]]);
+        // STORE
+        Route::post('/', ['uses'=>$controller_name.'@store', 'as'=>'store', 'roles'=>[1,2]]);
+        // SHOW
+        Route::get('/{id}', ['uses'=>$controller_name.'@show', 'as'=>'show', 'roles'=>[1,2]]);
+        // EDIT
+        Route::get('/{id}/edit', ['uses'=>$controller_name.'@edit', 'as'=>'edit', 'roles'=>[1,2]]);
+        // UPDATE
+        Route::put('/{id}/edit', ['uses'=>$controller_name.'@update', 'as'=>'update', 'roles'=>[1,2]]);
+        // DELETE
+        Route::delete('/{id}', ['uses'=>$controller_name.'@destroy', 'as'=>'destroy', 'roles'=>[1]]);
+    });
 
-    /*MAIL*/
-    Route::get('contact', [
-        'as' => 'contact',
-        'uses' => 'AboutController@create'
-    ]);
-    Route::post('contact', [
-        'as' => 'contact_store',
-        'uses' => 'AboutController@store'
-    ]);
+    /*TEAMS*/
+    Route::group(['as'=>'teams::', 'prefix'=>'teams', 'middleware'=>'roles'], function() {
+        $controller_name = 'TeamController';
 
+        // INDEX
+        Route::get('/', ['uses'=>$controller_name.'@index', 'as'=>'index', 'roles'=>[1,2,3,4]]);
+        // CREATE
+        Route::get('/create', ['uses'=>$controller_name.'@create', 'as'=>'create', 'roles'=>[1,2]]);
+        // STORE
+        Route::post('/', ['uses'=>$controller_name.'@store', 'as'=>'store', 'roles'=>[1,2]]);
+        // SHOW
+        Route::get('/{id}', ['uses'=>$controller_name.'@show', 'as'=>'show', 'roles'=>[1,2,3,4]]);
+        // EDIT
+        Route::get('/{id}/edit', ['uses'=>$controller_name.'@edit', 'as'=>'edit', 'roles'=>[1,2,3,4]]);
+        // UPDATE
+        Route::put('/{id}/edit', ['uses'=>$controller_name.'@update', 'as'=>'update', 'roles'=>[1,2,3,4]]);
+        // DELETE
+        Route::delete('/{id}', ['uses'=>$controller_name.'@destroy', 'as'=>'destroy', 'roles'=>[1]]);
+    });
+
+    /*VEHICLES*/
+    Route::group(['as'=>'vehicles::', 'prefix'=>'vehicles', 'middleware'=>'roles'], function() {
+        $controller_name = 'VehicleController';
+
+        // INDEX
+        Route::get('/', ['uses'=>$controller_name.'@index', 'as'=>'index', 'roles'=>[1,2]]);
+        // CREATE
+        Route::get('/create', ['uses'=>$controller_name.'@create', 'as'=>'create', 'roles'=>[1,2]]);
+        // STORE
+        Route::post('/', ['uses'=>$controller_name.'@store', 'as'=>'store', 'roles'=>[1,2]]);
+        // SHOW
+        Route::get('/{id}', ['uses'=>$controller_name.'@show', 'as'=>'show', 'roles'=>[1,2]]);
+        // EDIT
+        Route::get('/{id}/edit', ['uses'=>$controller_name.'@edit', 'as'=>'edit', 'roles'=>[1,2]]);
+        // UPDATE
+        Route::put('/{id}/edit', ['uses'=>$controller_name.'@update', 'as'=>'update', 'roles'=>[1,2]]);
+        // DELETE
+        Route::delete('/{id}', ['uses'=>$controller_name.'@destroy', 'as'=>'destroy', 'roles'=>[1]]);
+    });
+
+    /*JOBS*/
+    Route::group(['as'=>'jobs::', 'prefix'=>'jobs', 'middleware'=>'roles'], function() {
+        $controller_name = 'JobController';
+
+        // INDEX
+        Route::get('/', ['uses'=>$controller_name.'@index', 'as'=>'index', 'roles'=>[1,2]]);
+    });
+
+    /*CALENDAR*/
+    Route::get('calendar', 'CalendarController@index')->name('calendar');
+
+    /*CONTACT*/
+    Route::group(['as'=>'contacts::', 'prefix'=>'contacts'], function() {
+        Route::get('contact', 'AboutController@create')->name('create');
+        Route::post('contact', 'AboutController@store')->name('store');
+    });
 
     /*PDF*/
-    Route::get('pdf', [
-        'as' => 'pdf',
-        'uses' => 'PdfController@invoice'
-    ]);
+    Route::get('pdf', 'PdfController@invoice')->name('pdf');
+
+    /*CHARTS*/
+    Route::get('charts', 'ChartController@index')->name('charts');
+
     /*Route::get('pdf', function () {
         $pdf = PDF::loadView('chart');
         //return $pdf->stream();
         return $pdf->download('mecagoentodo.pdf');
     });*/
-
-    /*CALENDAR*/
-    Route::get('calendar', [
-        'as' => 'calendar',
-        'uses' => 'CalendarController@index'
-    ]);
-
-
-    /*CALENDAR*/
-    Route::get('chart', [
-        'as' => 'chart',
-        'uses' => 'ChartController@index'
-    ]);
 });

@@ -2,16 +2,14 @@
 
 namespace Novus;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Statusjob extends Model
+class StatusJob extends MyBaseModel
 {
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'statusjobs';
+    protected $table = 'status_jobs';
 
     /**
      * The attributes that are mass assignable.

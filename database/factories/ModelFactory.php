@@ -13,41 +13,55 @@
 
 $factory->define(Novus\User::class, function (Faker\Generator $faker) {
     return [
-        'name' => $faker->name,
-        'email' => $faker->email,
+        'cleaner_id' => 0,
+        'first_name' => strtoupper($faker->firstName()),
+        'last_name' => strtoupper($faker->lastName()),
+        'email' => strtolower($faker->freeEmail()),
+        'validated' => $faker->boolean($chanceOfGettingTrue = 50),
         'password' => bcrypt(str_random(10)),
         'remember_token' => str_random(10),
-        'role' => $faker->randomElement(['user','admin','super']),
+        'role_id' => $faker->numberBetween($min = 1, $max = 4),
+        'profile_picture' => 'default.jpg',
+        'description' => $faker->text($maxNbChars = 100),
+        'status' => $faker->boolean($chanceOfGettingTrue = 50),
+        'created_at' => '2016-03-16 00:00:00',
+        'updated_at' => '2016-03-16 00:00:00',
     ];
 });
 
 $factory->define(Novus\Cleaner::class, function (Faker\Generator $faker) {
 
-    $dlicence_no = $faker->boolean($chanceOfGettingTrue = 50);
-    if ($dlicence_no) {
-        $dlicence_no = strtoupper($faker->bothify('##??##??##??##??'));
+    $licence_no = $faker->boolean($chanceOfGettingTrue = 50);
+    if ($licence_no) {
+        $licence_no = strtoupper($faker->bothify('##??##??##??##??'));
     } else {
-        $dlicence_no = null;
+        $licence_no = null;
     }
 
     return [
+        'user_id' => $faker->numberBetween($min = 2, $max = 36),
         'id_number' => $faker->randomNumber($nbDigits = 8),
         'document_id' => $faker->numberBetween($min = 1, $max = 3),
         'first_name1' => strtoupper($faker->firstName()),
         'first_name2' => strtoupper($faker->firstName()),
         'last_name1' => strtoupper($faker->lastName()),
         'last_name2' => strtoupper($faker->lastName()),
-        'gender' => $faker->randomElement($array = array('M', 'F')),
-        'birthday' => $faker->date($format = 'Y-m-d', $max = '1997-01-01'),
         'phone_number' => $faker->numerify('04## ### ###'),
         'email' => strtolower($faker->freeEmail()),
+        'gender' => $faker->randomElement($array = array('M', 'F')),
+        'date_of_birth' => $faker->date($format = 'Y-m-d', $max = '1997-01-01'),
+        'country_id' => $faker->randomElement($array = array(32, 36, 76, 156, 170, 192, 276, 300, 360, 368, 392, 724, 826, 862)),
+        'language_id' => $faker->numberBetween($min = 1, $max = 182),
+        'english_level_id' => $faker->numberBetween($min = 1, $max = 10),
+        'profile_picture' => 'default.jpg',
         'tfn' => $faker->numerify('### ### ###'),
         'abn' => $faker->numerify('## ### ### ###'),
-        'dlicence_no' => $dlicence_no,
+        'licence_no' => $licence_no,
         'own_vehicle' => $faker->boolean($chanceOfGettingTrue = 10),
+        'licence_picture' => 'default.jpg',
         'no_jobs' => $faker->randomNumber($nbDigits = 2),
         'no_hours' => $faker->randomNumber($nbDigits = 2),
-        'amount_earned' => $faker->randomFloat($nbMaxDecimals = 2, $min = 4, $max = 4),
+        'profit' => $faker->randomFloat($nbMaxDecimals = 2, $min = 4, $max = 4),
         'description' => $faker->text($maxNbChars = 100),
         'status' => $faker->boolean($chanceOfGettingTrue = 50),
         'created_at' => '2016-03-16 00:00:00',
@@ -60,7 +74,7 @@ $factory->define(Novus\PaymentInfo::class, function (Faker\Generator $faker) {
         'cleaner_id' => $faker->numberBetween($min = 1, $max = 36),
         'bank_id' => $faker->numberBetween($min = 1, $max = 4),
         'bsb' => $faker->numerify('######'),
-        'account_number' => $faker->numerify('#########'),
+        'account_number' => $faker->numerify('##########'),
         'description' => $faker->text($maxNbChars = 100),
         'is_default' => $faker->boolean($chanceOfGettingTrue = 5),
         'created_at' => '2016-03-16 00:00:00',
@@ -102,8 +116,11 @@ $factory->define(Novus\Place::class, function (Faker\Generator $faker) {
         'suburb' => strtoupper($faker->city()),
         'state_id' => $faker->numberBetween($min = 1, $max = 7),
         'postcode' => $faker->numerify('####'),
-        'referencep' => $faker->text($maxNbChars = 50),
+        'reference' => $faker->text($maxNbChars = 50),
+        'status' => $faker->boolean($chanceOfGettingTrue = 50),
         'verified' => $verified,
+        'latitude' => $faker->latitude($min = -90, $max = 90),
+        'longitude' => $faker->longitude($min = -180, $max = 180),
         'cleaner_id' => $cleaner_id,
         'no_jobs' => $faker->numberBetween($min = 1, $max = 50),
         'created_at' => '2016-03-16 00:00:00',
@@ -118,7 +135,7 @@ $factory->define(Novus\Team::class, function (Faker\Generator $faker) {
     {
         case 2:
             $cleaner_id2 = $faker->numberBetween($min = 1, $max = 36);
-            $cleaner_id3 = null;
+            $cleaner_id3 = 0;
             break;
 
         case 3:
@@ -128,13 +145,14 @@ $factory->define(Novus\Team::class, function (Faker\Generator $faker) {
     }
 
     return [
-        'alias' => $faker->safeColorName(),
+        'alias' => strtoupper($faker->safeColorName()),
         'leader' => $faker->numberBetween($min = 1, $max = 36),
         'cleaner_id2' => $cleaner_id2,
         'cleaner_id3' => $cleaner_id3,
-        'cleaner_id4' => null,
-        'cleaner_id5' => null,
-        'cleaner_id6' => null,
+        'cleaner_id4' => 0,
+        'cleaner_id5' => 0,
+        'cleaner_id6' => 0,
+        'vehicle_id' => $faker->numberBetween($min = 1, $max = 7),
         'description' => $faker->text($maxNbChars = 50),
         'status' => true,
         'created_at' => '2016-03-16 00:00:00',
@@ -152,7 +170,7 @@ $factory->define(Novus\Job::class, function (Faker\Generator $faker) {
         'job_date' => $faker->date($format = 'Y-m-d', $max = 'now'),
         'job_time' => $faker->time($format = 'H:i:s', $max = 'now'),
         'description' => $faker->text($maxNbChars = 100),
-        'statusjob_id' => $faker->numberBetween($min = 1, $max = 6),
+        'status_job_id' => $faker->numberBetween($min = 1, $max = 6),
         'no_hours' => $faker->randomNumber($nbDigits = 2),
         'price' => $faker->randomFloat($nbMaxDecimals = 2, $min = 3, $max = 3),
         'created_at' => '2016-03-16 00:00:00',
@@ -162,8 +180,7 @@ $factory->define(Novus\Job::class, function (Faker\Generator $faker) {
 
 $factory->define(Novus\Availability::class, function (Faker\Generator $faker) {
     return [
-        'cleaner_id' => $faker->numberBetween($min = 1, $max = 36),
-        'schedule' => 'CADENA',
+        'timetable' => $faker->text($maxNbChars = 100),
         'created_at' => '2016-03-16 00:00:00',
         'updated_at' => '2016-03-16 00:00:00',
     ];
@@ -171,17 +188,25 @@ $factory->define(Novus\Availability::class, function (Faker\Generator $faker) {
 
 $factory->define(Novus\Vehicle::class, function (Faker\Generator $faker) {
     return [
-        'register' => strtoupper($faker->bothify('##??##??##??##??')),
-        'driver' => $faker->numberBetween($min = 1, $max = 36),
-        'team_id' => $faker->numberBetween($min = 1, $max = 12),
+        'registration_no' => strtoupper($faker->bothify('##??##??##??##??')),
+        'vin' => strtoupper($faker->bothify('##??##??##??##??')),
+        'engine_no' => strtoupper($faker->bothify('##??##??##??##??')),
+        'make' => strtoupper($faker->colorName()),
+        'colour' => strtoupper($faker->colorName()),
+        'type' => $faker->randomElement($array = array('SEDAN', 'WAGON', 'SUV')),
+        'year' => $faker->year($max = 'now'),
+        'plate' => strtoupper($faker->bothify('##??##??##??##??')),
+        'registration_expire' => $faker->date($format = 'Y-m-d', $max = 'now'),
+        'owner' => strtoupper($faker->name()),
+        'vehicle_picture' => 'default.jpg',
         'description' => $faker->text($maxNbChars = 50),
         'status' => true,
         'created_at' => '2016-03-16 00:00:00',
-        'updated_at' => '2016-03-16 00:00:00'
+        'updated_at' => '2016-03-16 00:00:00',
     ];
 });
 
-$factory->define(Novus\Cleanerjob::class, function (Faker\Generator $faker) {
+$factory->define(Novus\CleanerJob::class, function (Faker\Generator $faker) {
     return [
         'cleaner_id' => $faker->numberBetween($min = 1, $max = 36),
         'job_id' => $faker->numberBetween($min = 1, $max = 76),
@@ -196,8 +221,8 @@ $factory->define(Novus\Cleanerjob::class, function (Faker\Generator $faker) {
 
 $factory->define(Novus\Payment::class, function (Faker\Generator $faker) {
     return [
-        'paymentinfo_id' => $faker->numberBetween($min = 1, $max = 76),
-        'cleanerjob_id' => $faker->numberBetween($min = 1, $max = 40),
+        'payment_info_id' => $faker->numberBetween($min = 1, $max = 76),
+        'cleaner_job_id' => $faker->numberBetween($min = 1, $max = 40),
         'amount' => $faker->randomFloat($nbMaxDecimals = 2, $min = 3, $max = 4),
         'payment_date' => $faker->date($format = 'Y-m-d', $max = 'now'),
         'created_at' => '2016-03-16 00:00:00',
@@ -206,28 +231,7 @@ $factory->define(Novus\Payment::class, function (Faker\Generator $faker) {
 });
 
 
-$factory->define(Novus\Usuario::class, function (Faker\Generator $faker) {
-    return [
-        'first_name' => strtoupper($faker->firstName()),
-        'last_name' => strtoupper($faker->lastName()),
-        'birthday' => $faker->date($format = 'Y-m-d', $max = '1997-01-01'),
-        'status' => $faker->randomElement($array = array('A', 'I')),
-        'created_at' => '2016-03-16 00:00:00',
-        'updated_at' => '2016-03-16 00:00:00',
-    ];
-});
-
-/*$factory->define(Novus\UsuarioProfile::class, function (Faker\Generator $faker) {
-    return [
-        'usuario_id' => $faker->numberBetween($min = 1, $max = 40),
-        'facebook' => strtoupper($faker->userName()),
-        'twitter' => strtoupper($faker->userName()),
-        'description' => $faker->text($maxNbChars = 50),
-        'created_at' => '2016-03-16 00:00:00',
-        'updated_at' => '2016-03-16 00:00:00',
-    ];
-});*/
-
+/*
 $factory->define(Novus\UsuarioProfile::class, function ($faker) {
     return [
         'usuario_id'     => factory('Novus\Usuario')->create()->id,
@@ -238,3 +242,4 @@ $factory->define(Novus\UsuarioProfile::class, function ($faker) {
         'updated_at' => '2016-03-16 00:00:00',
     ];
 });
+*/

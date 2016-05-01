@@ -13,22 +13,6 @@ return [
     |
     */
 
-    'failed' => 'These credentials do not match our records.',
+    'failed' => 'These credentials do not match our records or user is currently INACTIVE.',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-
-    'login'             => 'Login',
-    'login_title'       => 'Login',
-    'remember'          => 'Remember Me',
-    'login_button'      => 'Login',
-    'forgot_password'   => 'Forgot Your Password?',
-
-    'register'          => 'Register',
-    'register_title'    => 'Register',
-    'register_button'   => 'Register',
-
-    'forgot_password_title'     => 'Reset Password',
-    'forgot_password_button'    => 'Send Password Reset Link',
-    
-    'reset_password_title'      => 'Reset Password',
-    'reset_password_button'     => 'Reset Password',
 ];

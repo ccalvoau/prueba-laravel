@@ -1,7 +1,7 @@
 @extends('layout.master')
 
 @section('title')
-    @lang('common.company_name_capital') - @lang('place.page_title')
+    @lang('common.company_name_capital') - @lang('validation.attributes.place.page_title')
 @endsection
 
 @section('content')
@@ -17,32 +17,39 @@
                         @lang('validation.attributes.place.pt_place')
                         <small>- @lang('validation.attributes.pt_edit')</small>
                     </h1>
-
-                    @include('layout.partials.flash_message')
                 </section>
 
                 <!-- Main content -->
                 <section class="content">
 
+                    @include('layout.partials.flash_message')
+
                     @include('layout.partials.errors')
 
-                            <!-- box form elements -->
                     <div class="box box-solid box-primary">
 
                         <div class="box-header with-border">
-                            <h3 class="box-title">
+                            <div class="box-title">
                                 @lang('validation.attributes.place.edit_title_table'): {{ $place->id }}
-                            </h3>
-                            <a href="{{ route('places.index') }}" class="btn btn-default pull-right btn-xs">
-                                @lang('validation.attributes.place.button_list')
-                            </a>
+                            </div>
+                            <div class="pull-right">
+                                <a href="{{ route('places::show', [$place->id]) }}" class="btn btn-default btn-xs">
+                                    <i class="fa fa-search"></i>
+                                    @lang('validation.attributes.place.button_show')
+                                </a>
+                                &nbsp;
+                                <a href="{{ route('places::index') }}" class="btn btn-default btn-xs">
+                                    <i class="fa fa-navicon"></i>
+                                    @lang('validation.attributes.place.button_list')
+                                </a>
+                            </div>
                         </div><!-- /.box-header -->
 
                         <div class="box-body">
 
-                            {!! Form::model($place, ['route' => ['places.update', $id], 'class' => 'form-horizontal', 'method' => 'put']) !!}
+                            {!! Form::model($place, ['route' => ['places::update', $id], 'class' => 'form-horizontal', 'method' => 'put']) !!}
 
-                                @include('places.partials.fields')
+                                @include('places.partials.fields_edit')
 
                                 <div class="col-md-12">
                                     <hr>
@@ -55,7 +62,7 @@
 
                         </div><!-- /.box-body -->
 
-                    </div><!-- /.box form elements -->
+                    </div>
 
                 </section>
                 <!-- /.content -->
@@ -75,7 +82,6 @@
 
     <!-- Select2 -->
     {!! Html::script('/assets/adminlte/plugins/select2/select2.full.min.js') !!}
-
     <!-- InputMask -->
     {!! Html::script('/assets/adminlte/plugins/input-mask/jquery.inputmask.js') !!}
     {!! Html::script('/assets/adminlte/plugins/input-mask/jquery.inputmask.date.extensions.js') !!}
@@ -85,7 +91,11 @@
     <script>
         $(document).ready(function () {
             //Initialize Select2 Elements
-            $(".select2").select2();
+            var $option = '@lang('validation.attributes.select_an_option')';
+            $('#client_id').select2({ placeholder: $option });
+            $('#street_type_id').select2({ placeholder: $option });
+            $('#state_id').select2({ placeholder: $option });
+            $('#status').select2({ placeholder: $option });
 
             $("[data-mask]").inputmask();
         });

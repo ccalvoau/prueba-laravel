@@ -1,7 +1,7 @@
 @extends('layout.master')
 
 @section('title')
-    @lang('common.company_name_capital') - @lang('client.page_title')
+    @lang('common.company_name_capital') - @lang('validation.attributes.client.page_title')
 @endsection
 
 @section('content')
@@ -22,16 +22,23 @@
                 <!-- Main content -->
                 <section class="content">
 
-                    <!-- box form elements -->
                     <div class="box box-solid box-primary">
 
                         <div class="box-header with-border">
-                            <h3 class="box-title">
+                            <div class="box-title">
                                 @lang('validation.attributes.client.show_title_table'): {{ $client->id }}
-                            </h3>
-                            <a href="{{ route('clients.index') }}" class="btn btn-default pull-right btn-xs">
-                                @lang('validation.attributes.client.button_list')
-                            </a>
+                            </div>
+                            <div class="pull-right">
+                                <a href="{{ route('clients::edit', ['id' => $client->id]) }}" class="btn btn-default btn-xs">
+                                    <i class="fa fa-pencil"></i>
+                                    @lang('validation.attributes.client.button_edit')
+                                </a>
+                                &nbsp;
+                                <a href="{{ route('clients::index') }}" class="btn btn-default btn-xs">
+                                    <i class="fa fa-navicon"></i>
+                                    @lang('validation.attributes.client.button_list')
+                                </a>
+                            </div>
                         </div><!-- /.box-header -->
 
                         <div class="box-body">
@@ -40,15 +47,14 @@
 
                         </div><!-- /.box-body -->
 
-                    </div><!-- /.box form elements -->
+                    </div>
 
-                    <!-- box form elements -->
-                    <div class="box box-solid box-primary    {{--collapsed-box--}}">
+                    <div class="box box-solid box-primary">
 
                         <div class="box-header with-border">
-                            <h3 class="box-title">
+                            <div class="box-title">
                                 @lang('validation.attributes.place.index_title_table')
-                            </h3>
+                            </div>
                             <div class="box-tools pull-right">
                                 <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                                 </button>
@@ -56,20 +62,23 @@
                         </div><!-- /.box-header -->
 
                         @if(!$places->isEmpty())
-                            <div class="box-body">
+                        	<div class="box-body">
 
-                                @include('places.partials.table')
+                            	@include('places.partials.table')
 
-                            </div><!-- /.box-body -->
+                        	</div><!-- /.box-body -->
                         @else
                             <div class="box-body">
 
-                                @lang('validation.attributes.empty.client_places')
+                                @lang('validation.attributes.client.places_empty')
+                                <a href="{{ route('places::create') }}" class="btn btn-primary pull-right btn-xs">
+                                    @lang('validation.attributes.place.button_add')
+                                </a>
 
                             </div><!-- /.box-body -->
                         @endif
 
-                    </div><!-- /.box form elements -->
+                    </div>
 
                 </section>
                 <!-- /.content -->
@@ -94,7 +103,9 @@
     <!-- Page script -->
     <script>
         $(document).ready(function () {
-            $("#tb_index_places_infos").DataTable();
+            $("#tb_index_places").DataTable({
+                "order": [[ 6, "desc" ],[ 0, "desc" ]]
+            });
         });
     </script>
 

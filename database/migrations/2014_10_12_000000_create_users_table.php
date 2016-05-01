@@ -14,11 +14,17 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
+            $table->string('cleaner_id')->unsigned()->nullable()->default(0);
+            $table->string('first_name');
+            $table->string('last_name');
             $table->string('email')->unique();
+            $table->boolean('validated')->default(false);
             $table->string('password', 60);
             $table->rememberToken();
-            $table->enum('role',['user','admin','super']);
+            $table->string('role_id')->unsigned();
+            $table->string('profile_picture', 32)->nullable()->default('default.jpg');
+            $table->text('description')->nullable();
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

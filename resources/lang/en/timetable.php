@@ -15,6 +15,14 @@ return [
     'title_table'               => 'Availability',
 
     'time_day'                  => 'Time / Day',
+    'mon'                       => 'Mon',
+    'tue'                       => 'Tue',
+    'wed'                       => 'Wed',
+    'thu'                       => 'Thu',
+    'fri'                       => 'Fri',
+    'sat'                       => 'Sat',
+    'sun'                       => 'Sun',
+
     'monday'                    => 'Monday',
     'tuesday'                   => 'Tuesday',
     'wednesday'                 => 'Wednesday',

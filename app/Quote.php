@@ -2,9 +2,7 @@
 
 namespace Novus;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Quote extends Model
+class Quote extends MyBaseModel
 {
     /**
      * The database table used by the model.

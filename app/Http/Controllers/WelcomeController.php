@@ -2,15 +2,12 @@
 
 namespace Novus\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 use Novus\Http\Requests;
-use Novus\Http\Controllers\Controller;
 
 class WelcomeController extends Controller
 {
     /**
-     * Create a new controller instance.
+     * WelcomeController constructor.
      *
      * @return void
      */
@@ -19,6 +16,7 @@ class WelcomeController extends Controller
         $this->middleware('guest');
     }
 
+
     /**
      * Display a listing of the resource.
      *
@@ -26,6 +24,7 @@ class WelcomeController extends Controller
      */
     public function index()
     {
-        return Make::view('welcome');
+        // Redirect to welcome View
+        return \View::make('welcome');
     }
 }

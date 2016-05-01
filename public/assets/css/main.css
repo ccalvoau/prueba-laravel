@@ -9,6 +9,18 @@
     text-align: left;
 }
 
+.td_data_names17 {
+    font-weight: bold;
+    text-align: right;
+    width: 17%;
+}
+
+.td_data_values33 {
+    text-decoration: none;
+    text-align: left;
+    width: 33%;
+}
+
 .just {
     text-align: justify;
 }

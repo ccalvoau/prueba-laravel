@@ -5,7 +5,7 @@
                 @lang('validation.attributes.payment_info.cleaner_name'):
             </td>
             <td class="td_data_values">
-                <a title="@lang('common.table_title_show')" href="{{ route('cleaners.show', $payment_info->cleaner->id) }}">
+                <a title="@lang('common.table_title_show')" href="{{ route('cleaners::show', $payment_info->cleaner->id) }}">
                     {{ $payment_info->cleaner->full_name }}
                 </a>
             </td>

@@ -2,9 +2,7 @@
 
 namespace Novus;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Client extends Model
+class Client extends MyBaseModel
 {
     /**
      * The database table used by the model.
@@ -93,5 +91,19 @@ class Client extends Model
     {
         ($this->status == 'A') ? $status = 'ACTIVE' : $status = 'INACTIVE';
         return $status;
+    }
+
+    /**
+     * Get the option list to populate the selects in the Forms
+     *
+     * @return mixed
+     */
+    public function getSelectList()
+    {
+        // Searching for the data to populate the Form
+        $option_list = Client::where('status', true)->get()->pluck('short_name', 'id');
+        // Adding default option to the list
+        $option_list = $this->addSelectAnOption($option_list);
+        return $option_list;
     }
 }

@@ -2,8 +2,6 @@
 
 namespace Novus\Http\Requests;
 
-use Novus\Http\Requests\Request;
-
 class ContactFormRequest extends Request
 {
     /**
@@ -26,7 +24,7 @@ class ContactFormRequest extends Request
         return [
             'name' => 'required',
             'email' => 'required|email',
-            'message' => 'required',
+            'user_message' => 'required',
         ];
     }
 }

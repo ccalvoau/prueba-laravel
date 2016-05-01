@@ -14,8 +14,16 @@
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
                     @if (Auth::guest())
-                        <li id="li_login"><a href="{{ route('login') }}">@lang('auth.login')</a></li>
-                        <li id="li_register"><a href="{{ route('register') }}">@lang('auth.register')</a></li>
+                        <li id="li_login">
+                            <a href="{{ route('login') }}">
+                                @lang('validation.attributes.auth.login_header')
+                            </a>
+                        </li>
+                        {{--<li id="li_register">
+                            <a href="{{ route('register') }}">
+                                @lang('validation.attributes.auth.register_header')
+                            </a>
+                        </li>--}}
                     @endif
                 </ul>
             </div>

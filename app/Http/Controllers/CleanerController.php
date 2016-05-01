@@ -2,15 +2,33 @@
 
 namespace Novus\Http\Controllers;
 
+use Auth;
 use Illuminate\Support\Facades\Session;
+use Lang;
 use Novus\Cleaner;
+use Novus\Country;
 use Novus\Document;
+use Novus\EnglishLevel;
 use Novus\Http\Requests;
 use Novus\Http\Requests\Cleaner\CreateCleanerRequest;
 use Novus\Http\Requests\Cleaner\EditCleanerRequest;
+use Novus\Language;
+use Novus\Role;
+use Novus\User;
 
 class CleanerController extends Controller
 {
+    private $path = 'cleaners';
+    protected $instance;
+
+    /**
+     * CleanerController constructor.
+     */
+    public function __construct()
+    {
+        $this->instance = new Cleaner();
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -24,7 +42,7 @@ class CleanerController extends Controller
         //dd($data);
 
         // Redirect to index View with the list
-        return \View::make('cleaners.index', $data);
+        return \View::make($this->path.'.index', $data);
     }
 
     /**
@@ -40,48 +58,110 @@ class CleanerController extends Controller
         //dd($data);
 
         // Redirect to create View with $data
-        return \View::make('cleaners.create', $data);
+        return \View::make($this->path.'.create', $data);
     }
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param CreateCleanerRequest $request
-     * @return mixed
+     * @return \Illuminate\Contracts\View\View
      */
     public function store(CreateCleanerRequest $request)
     {
-        $first_name2 = $request->get('first_name2');
-        $first_name2 = trim($first_name2) !== '' ? $first_name2 : null;
-        $last_name2 = $request->get('$last_name2');
-        $last_name2 = trim($last_name2) !== '' ? $last_name2 : null;
+        $first_name2 = $this->instance->nullIfBlankUpperCase($request->get('first_name2'));
+		$last_name2 = $this->instance->nullIfBlankUpperCase($request->get('last_name2'));
+		$tfn = $this->instance->nullIfBlank($request->get('tfn'));
+		$abn = $this->instance->nullIfBlank($request->get('abn'));
+		$licence_no = $this->instance->nullIfBlankUpperCase($request->get('licence_no'));
+		$description = $this->instance->nullIfBlank($request->get('description'));
 
-        $data = array(
+        // Generating the name of profile picture and saving it into public
+        $profile_picture = $this->instance->savePicture($request, 'profile_picture', 200, 200, 'profile_pictures', 'default.jpg');
+
+        // Generating the name of licence picture and saving it into public
+        $licence_picture = $this->instance->savePicture($request, 'licence_picture', 400, 260, 'licence_pictures', 'default.jpg');
+
+        // ADDING CLEANER AS A USER
+        // Setting $data to create persist a new instance of an Object in DB
+        $data_user = array(
+            'cleaner_id' => 0,
+            'first_name' => strtoupper($request->get('first_name1')),
+            'last_name' => strtoupper($request->get('last_name1')),
+            'email' => strtolower($request->get('email')),
+            'password' => bcrypt('87654321'),
+            'profile_picture' => $profile_picture,
+            'role_id' => $request->get('role_id'),
+            'description' => $description,
+            'status' => false,
+        );
+
+        //dd($data_user);
+
+        // Saving the instance into DB
+        $user = User::create($data_user);
+        $user_id = $user->id;
+        $user_email = $user->email;
+
+        $data = [
+            'name' => $user->name,
+            'email' => $user->email,
+        ];
+
+        \Mail::send('emails.welcome_user',
+            $data,
+            function ($message) use ($user) {
+                $message->from('novus@gmail.com', Lang::get('validation.attributes.contact.email.from_description'));
+                $message->to($user->email);
+                $message->subject(Lang::get('passwords.email.welcome.subject'));
+        });
+
+        // ADDING CLEANER
+        // Setting $data to create persist a new instance of an Object in DB
+        $data_cleaner = array(
+            'user_id' => $user_id,
             'id_number' => strtoupper($request->get('id_number')),
             'document_id' => $request->get('document_id'),
             'first_name1' => strtoupper($request->get('first_name1')),
             'first_name2' => $first_name2,
             'last_name1' => strtoupper($request->get('last_name1')),
             'last_name2' => $last_name2,
-            'gender' => $request->get('gender'),
-            'birthday' => $request->get('birthday'),
-            'phone_number' => str_replace('-', ' ', $request->get('phone_number')),
+            'phone_number' => $request->get('phone_number'),
             'email' => strtolower($request->get('email')),
-            'tfn' => $request->get('tfn'),
-            'abn' => $request->get('abn'),
-            'dlicence_no' => strtoupper($request->get('dlicence_no')),
+            'gender' => $request->get('gender'),
+            'date_of_birth' => $request->get('date_of_birth'),
+            'country_id' => $request->get('country_id'),
+            'language_id' => $request->get('language_id'),
+            'english_level_id' => $request->get('english_level_id'),
+            'profile_picture' => $profile_picture,
+            'tfn' => $tfn,
+            'abn' => $abn,
+            'licence_no' => $licence_no,
+            'licence_picture' => $licence_picture,
             'own_vehicle' => $request->get('own_vehicle'),
-            'description' => $request->get('description'),
+            'description' => $description,
+            'status' => false,
         );
 
-        var_dump($data);
-        dd($data);
+        //dd($data_cleaner);
 
-        $cleaner = Cleaner::create($data);
+        // Saving th instance into DB
+		$cleaner = Cleaner::create($data_cleaner);
 
-        Session::flash('flash_message', 'Cleaner added!');
+        $user = new User();
+        $user->updateCleanerIdByEmail($cleaner->id, $user_email);
 
-        return redirect('cleaners');
+        // Showing flash message to the user
+        Session::flash('flash_message', Lang::get('validation.messages.cleaners.create_user'));
+        Session::flash('flash_type', 'success');
+
+        // Setting the list in $data array
+        $data = $this->listTable();
+
+        //dd($data);
+
+        // Redirect to index View with the list
+        return \View::make($this->path.'.index', $data);
     }
 
     /**
@@ -92,27 +172,37 @@ class CleanerController extends Controller
      */
     public function show($id)
     {
-        // Searching the instance into DB given an ID
-        $cleaner = Cleaner::findOrFail($id);
-        $payment_infos = $cleaner->paymentInfo;
+        if(Auth::user()->hasAnyRole([1,2]) || (Auth::user()->hasAnyRole([3,4]) && Auth::user()->cleaner_id == $id))
+        {
+            // Deleting flash message to the user
+            Session::forget('flash_message');
+            Session::forget('flash_type');
 
-        // Formatting the data from DB to the View
-
-
-        // Setting $data to pass the data into the View
-        $data = [
-            'id' => $id,
-            'cleaner' => $cleaner,
-            'payment_infos' => $payment_infos,
-        ];
-
-        //dd($data);
-
-        // Showing flash message to the user
-        //Session::flash('flash_message', 'Showing Client '.$id.' successfully!');
-
-        // Redirect to Show View with the $data
-        return \View::make('cleaners.show', $data);
+            // Searching the instance into DB given an ID
+            $cleaner = Cleaner::findOrFail($id);
+            $payment_infos = $cleaner->paymentInfo;
+    
+            // Setting $data to pass the data into the View
+            $data = [
+                'id' => $id,
+                'cleaner' => $cleaner,
+                'payment_infos' => $payment_infos,
+            ];
+    
+            //dd($data);
+    
+            // Redirect to Show View with the $data
+            return \View::make($this->path.'.show', $data);
+        }
+        else
+        {
+            // Showing flash message to the user
+            Session::flash('flash_message', Lang::get('validation.messages.no_permission'));
+            Session::flash('flash_type', 'danger');
+            
+            // Redirect to Show View with the $data
+            return \View::make('home');
+        }
     }
 
     /**
@@ -123,19 +213,121 @@ class CleanerController extends Controller
      */
     public function edit($id)
     {
-        return 'Showing Information for Editing Cleaner: '.$id;
+        if(Auth::user()->hasAnyRole([1,2]) || (Auth::user()->hasAnyRole([3,4]) && Auth::user()->cleaner_id == $id))
+        {
+            // Deleting flash message to the user
+            Session::forget('flash_message');
+            Session::forget('flash_type');
+
+            // Searching the instance into DB given an ID
+            $cleaner = Cleaner::findOrFail($id);
+
+            // Searching for the data for populate the form
+            $data = $this->prepareForm();
+
+            // Setting $data to pass the data into the View
+            $data = array_add($data, 'id', $id);
+            $data = array_add($data, 'cleaner', $cleaner);
+
+            //dd($data);
+
+            // Redirect to Edit View with the $data
+            return \View::make($this->path.'.edit', $data);
+        }
+        else
+        {
+            // Showing flash message to the user
+            Session::flash('flash_message', Lang::get('validation.messages.no_permission'));
+            Session::flash('flash_type', 'danger');
+
+            // Redirect to Show View with the $data
+            return \View::make('home');
+        }
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param EditCleanerRequest $request
+     * @param $id
+     * @return \Illuminate\Contracts\View\View
      */
-    public function update(Request $request, $id)
+    public function update(EditCleanerRequest $request, $id)
     {
-        return 'Showing Information for Cleaner: '.$id.' Updated';
+        $first_name2 = $this->instance->nullIfBlankUpperCase($request->get('first_name2'));
+		$last_name2 = $this->instance->nullIfBlankUpperCase($request->get('last_name2'));
+		$tfn = $this->instance->nullIfBlank($request->get('tfn'));
+		$abn = $this->instance->nullIfBlank($request->get('abn'));
+		$licence_no = $this->instance->nullIfBlankUpperCase($request->get('licence_no'));
+		$description = $this->instance->nullIfBlank($request->get('description'));
+
+        // Searching for the instance in DB
+        $cleaner = Cleaner::findOrFail($id);
+
+        // Generating the name of profile picture and saving it into public
+        $profile_picture = $this->instance->savePicture($request, 'profile_picture', 200, 200, 'profile_pictures', $cleaner->profile_picture);
+
+        if($request->file('profile_picture') !== null)
+        {
+            $user = new User();
+            $user->updateProfilePictureById($cleaner->user_id, $profile_picture);
+        }
+
+        // Generating the name of licence picture and saving it into public
+        $licence_picture = $this->instance->savePicture($request, 'licence_picture', 400, 260, 'licence_pictures', $cleaner->licence_picture);
+
+		// Setting $data to update an existent instance of an Object in DB
+        $data_cleaner = array(
+            'id_number' => strtoupper($request->get('id_number')),
+            'document_id' => $request->get('document_id'),
+            'first_name1' => strtoupper($request->get('first_name1')),
+            'first_name2' => $first_name2,
+            'last_name1' => strtoupper($request->get('last_name1')),
+            'last_name2' => $last_name2,
+            'phone_number' => $request->get('phone_number'),
+            'email' => strtolower($request->get('email')),
+            'gender' => $request->get('gender'),
+            'date_of_birth' => $request->get('date_of_birth'),
+            'country_id' => $request->get('country_id'),
+            'language_id' => $request->get('language_id'),
+            'english_level_id' => $request->get('english_level_id'),
+            'profile_picture' => $profile_picture,
+            'tfn' => $tfn,
+            'abn' => $abn,
+            'licence_no' => $licence_no,
+            'licence_picture' => $licence_picture,
+            'own_vehicle' => $request->get('own_vehicle'),
+            'description' => $description,
+            'status' => $request->get('status'),
+        );
+
+        //dd($data_cleaner);
+
+        // Filling the instance with the new $data
+        $cleaner->fill($data_cleaner);
+        // Updating the instance into DB
+        $cleaner->save();
+
+        // Showing flash message to the user
+        Session::flash('flash_message', Lang::get('validation.messages.cleaners.update'));
+        Session::flash('flash_type', 'success');
+
+
+        // METHOD edit
+        // Searching the instance into DB given an ID
+        $cleaner = Cleaner::findOrFail($id);
+
+        // Searching for the data for populate the form
+        $data = $this->prepareForm();
+
+        // Setting $data to pass the data into the View
+        $data = array_add($data, 'id', $id);
+        $data = array_add($data, 'cleaner', $cleaner);
+
+        //dd($data);
+
+        // Redirect to Edit View with the $data
+        return \View::make($this->path.'.edit', $data);
     }
 
     /**
@@ -150,13 +342,14 @@ class CleanerController extends Controller
         Cleaner::destroy($id);
 
         // Showing flash message to the user
-        Session::flash('flash_message', 'Cleaner: '.$id.' has been deleted successfully!');
+        Session::flash('flash_message', Lang::get('validation.messages.cleaners.destroy'));
+        Session::flash('flash_type', 'success');
 
         // Setting the list in $data array
         $data = $this->listTable();
 
         // Redirect to index View with the list
-        return \View::make('cleaners.index', $data);
+        return \View::make($this->path.'.index', $data);
     }
 
     /**
@@ -188,14 +381,26 @@ class CleanerController extends Controller
     public function prepareForm()
     {
         // Searching for the data to populate the Form
-        $documents = Document::get()->pluck('name', 'id');
+        $document = new Document();
+        $nationality = new Country();
+        $language = new Language();
+        $english_level = new EnglishLevel();
+        $role = new Role();
 
         // Adding default value to the list
-        $documents = array_add($documents, '', 'SELECT AN OPTION');
+        $documents = $document->getSelectList();
+        $nationalities = $nationality->getSelectList();
+        $languages = $language->getSelectList();
+        $english_levels = $english_level->getSelectList();
+        $roles = $role->getSelectList( "CLEANER" );
 
         // Setting the lists in $data array
         $data = [
             'documents' => $documents,
+            'nationalities' => $nationalities,
+            'languages' => $languages,
+            'english_levels' => $english_levels,
+            'roles' => $roles,
         ];
 
         //dd($data);

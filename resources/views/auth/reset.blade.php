@@ -1,74 +1,117 @@
 @extends('layout_auth.auth')
 
 @section('title')
-	@lang('common.company_name_capital') - @lang('auth.login')
+	@lang('common.company_name_capital') - @lang('validation.attributes.auth.reset_title')
 @endsection
 
 @section('content')
-	<!-- Content Header (Page header) -->
-	<section class="content-header">
-		<h1>
-			@lang('pages.auth.reset_title')
-			<small>@lang('pages.auth.reset_description')</small>
-		</h1>
-	</section>
 
-	<!-- Main content -->
-	<section class="content">
+	<div class="container-fluid" style="width: 65%">
+		<div class="row">
 
-		@include('layout_auth.partials.errors')
+			<div class="col-md-12">
 
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-md-8 col-md-offset-2">
-					<div class="panel panel-primary">
+				<!-- Content Header (Page header) -->
+				<section class="content-header">
+					<h1>
+						@lang('validation.attributes.auth.pt_auth')
+						<small>@lang('validation.attributes.auth.pt_reset')</small>
+					</h1>
+				</section>
 
-						<div class="panel-heading">
-							@lang('auth.reset_password_title')
-						</div>
+				<!-- Main content -->
+				<section class="content">
 
-						<div class="panel-body">
+					@include('layout_auth.partials.errors')
 
-							<form class="form-horizontal" role="form" method="POST" action="{{ route('reset') }}">
-								<input type="hidden" name="_token" value="{{ csrf_token() }}">
-								<input type="hidden" name="token" value="{{ $token }}">
+					<div class="box box-solid box-primary">
 
-								<div class="form-group">
-									<label class="col-md-4 control-label">@lang('validation.attributes.email')</label>
-									<div class="col-md-6">
-										<input type="email" class="form-control" name="email" value="{{ old('email') }}">
+						<div class="box-header with-border">
+							@lang('validation.attributes.auth.reset_title')
+						</div><!-- /.box-header -->
+
+						<div class="box-body">
+
+							{!! Form::open(['route' => 'reset', 'class' => 'form-horizontal', 'method' => 'POST', 'role' => 'form']) !!}
+
+                                <input type="hidden" name="token" value="{{ $token }}">
+
+                                <div class="form-group">
+									{!! Form::label('email', '* '.Lang::get('validation.attributes.auth.email').':', ['class' => 'col-sm-4 control-label']) !!}
+									<div class="col-sm-6">
+										<div class="input-group">
+											<div class="input-group-addon">
+												<i class="icon fa fa-envelope"></i>
+											</div>
+											{!! Form::text('email', $email, [
+											    'id' => 'email',
+											    'placeholder' => Lang::get('validation.placeholders.email'),
+											    'class' => 'form-control',
+											    'type' => 'email',
+											    'required' => 'required',
+											    'readonly' => 'readonly'
+											    ])
+											!!}
+										</div>
 									</div>
 								</div>
 
 								<div class="form-group">
-									<label class="col-md-4 control-label">@lang('validation.attributes.password')</label>
-									<div class="col-md-6">
-										<input type="password" class="form-control" name="password">
+									{!! Form::label('password', '* '.Lang::get('validation.attributes.auth.password').':', ['class' => 'col-sm-4 control-label']) !!}
+									<div class="col-sm-6">
+										{!! Form::password('password', [
+										    'id' => 'password',
+										    'placeholder' => Lang::get('validation.placeholders.password'),
+										    'class' => 'form-control',
+										    'onmouseover' => 'this.focus();',
+										    'required' => 'required'
+										    ])
+										!!}
 									</div>
 								</div>
 
 								<div class="form-group">
-									<label class="col-md-4 control-label">@lang('validation.attributes.password_confirmation')</label>
-									<div class="col-md-6">
-										<input type="password" class="form-control" name="password_confirmation">
+									{!! Form::label('password_confirmation', '* '.Lang::get('validation.attributes.auth.password_confirmation').':', ['class' => 'col-sm-4 control-label']) !!}
+									<div class="col-sm-6">
+										{!! Form::password('password_confirmation', [
+										    'id' => 'password_confirmation',
+										    'placeholder' => Lang::get('validation.placeholders.password_confirmation'),
+										    'class' => 'form-control',
+										    'onmouseover' => 'this.focus();',
+										    'required' => 'required'
+										    ])
+										!!}
 									</div>
 								</div>
 
+                                <hr />
+
 								<div class="form-group">
-									<div class="col-md-6 col-md-offset-4">
+									<div class="col-sm-6 col-sm-offset-4">
 										<button type="submit" class="btn btn-primary">
-											@lang('auth.reset_password_button')
+											@lang('validation.attributes.auth.button_reset')
 										</button>
 									</div>
 								</div>
-							</form>
-						</div>
+
+							{!! Form::close() !!}
+
+						</div><!-- /.box-body -->
+
 					</div>
-				</div>
+
+				</section>
+				<!-- /.content -->
+
 			</div>
+			<!-- /.column -->
+
 		</div>
-	</section>
+		<!-- /.row -->
+	</div>
+	<!-- /.container -->
 @endsection
+
 
 @section('scripts')
 

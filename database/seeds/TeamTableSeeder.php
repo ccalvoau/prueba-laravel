@@ -11,6 +11,6 @@ class TeamTableSeeder extends Seeder
      */
     public function run()
     {
-        //
+        factory(Novus\Team::class, 5)->create();
     }
 }

@@ -2,10 +2,7 @@
 
 namespace Novus\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 use Novus\Http\Requests;
-use Novus\Http\Controllers\Controller;
 use Novus\State;
 
 class ChartController extends Controller

@@ -1,36 +1,45 @@
 @extends('layout.master')
 
 @section('title')
-{{ 'Novus - Home' }}
+    @lang('common.company_name_capital') - @lang('common.intranet')
 @endsection
 
 
 @section('content')
-        <!-- Content Header (Page header) -->
-<section class="content-header">
-    <h1>
-        {{ $page_title or 'Page Title' }}
-        <small>- {{ $page_description or 'Page Description' }}</small>
-    </h1>
-</section>
 
-<!-- Main content -->
-<section class="content">
-
-    <div class="container-fluid">
+    <div class="container-fluid" style="width: 98%">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
-                <div class="panel panel-default">
-                    <div class="panel-heading">Home</div>
-                    <div class="panel-body">
-                        WELCOME
+
+            <div class="col-md-12">
+
+                <!-- Content Header (Page header) -->
+                <section class="content-header">
+                    <h1>
+                        @lang('validation.attributes.home.pt_home')
+                        <small>- @lang('validation.attributes.home.pt_index')</small>
+                    </h1>
+                </section>
+
+                <!-- Main content -->
+                <section class="content">
+
+                    @include('layout.partials.flash_message')
+
+                    <div align="center">
+                        <img src="{{ asset('assets/img/slider-novus.jpg') }}" alt="@lang('common.company_name')"/>
                     </div>
-                </div>
+
+                </section>
+                <!-- /.content -->
+
             </div>
+            <!-- /.column -->
+
         </div>
+        <!-- /.row -->
     </div>
-</section>
-<!-- /.content -->
+    <!-- /.container -->
+
 @endsection
 
 

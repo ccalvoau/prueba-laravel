@@ -1,7 +1,7 @@
 @extends('layout.master')
 
 @section('title')
-    @lang('common.company_name_capital') - @lang('client.page_title')
+    @lang('common.company_name_capital') - @lang('validation.attributes.client.page_title')
 @endsection
 
 @section('content')
@@ -17,8 +17,6 @@
                         @lang('validation.attributes.client.pt_client')
                         <small>- @lang('validation.attributes.pt_create')</small>
                     </h1>
-
-                    @include('layout.partials.flash_message')
                 </section>
 
                 <!-- Main content -->
@@ -26,36 +24,36 @@
 
                     @include('layout.partials.errors')
 
-                    <!-- box form elements -->
                     <div class="box box-solid box-primary">
 
                         <div class="box-header with-border">
-                            <h3 class="box-title">
+                            <div class="box-title">
                                 @lang('validation.attributes.client.create_title_table')
-                            </h3>
-                            <a href="{{ route('clients.index') }}" class="btn btn-default pull-right btn-xs">
+                            </div>
+                            <a href="{{ route('clients::index') }}" class="btn btn-default pull-right btn-xs">
+                                <i class="fa fa-navicon"></i>
                                 @lang('validation.attributes.client.button_list')
                             </a>
                         </div><!-- /.box-header -->
 
                         <div class="box-body">
 
-                            {!! Form::open(['route' => 'clients.store', 'class' => 'form-horizontal']) !!}
+                            {!! Form::open(['route' => 'clients::store', 'class' => 'form-horizontal']) !!}
 
-                            @include('clients.partials.fields')
+                                @include('clients.partials.fields_create')
 
-                            <div class="col-md-12">
-                                <hr>
-                                <button type="submit" class="btn btn-block btn-primary">
-                                    @lang('validation.attributes.client.button_create')
-                                </button>
-                            </div><!-- /.col12 -->
+                                <div class="col-md-12">
+                                    <hr>
+                                    <button type="submit" class="btn btn-block btn-primary">
+                                        @lang('validation.attributes.client.button_create')
+                                    </button>
+                                </div><!-- /.col12 -->
 
                             {!! Form::close() !!}
 
                         </div><!-- /.box-body -->
 
-                    </div><!-- /.box form elements -->
+                    </div>
 
                 </section>
                 <!-- /.content -->
@@ -85,7 +83,8 @@
     <script>
         $(document).ready(function () {
             //Initialize Select2 Elements
-            $(".select2").select2();
+            var $option = '@lang('validation.attributes.select_an_option')';
+            $('#client_type_id').select2({ placeholder: $option });
 
             $("[data-mask]").inputmask();
         });

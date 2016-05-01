@@ -2,16 +2,14 @@
 
 namespace Novus;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Availability extends Model
+class Availability extends MyBaseModel
 {
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'availabilitys';
+    protected $table = 'availabilities';
 
     /**
      * The attributes that are mass assignable.
@@ -19,8 +17,7 @@ class Availability extends Model
      * @var array
      */
     protected $fillable = [
-        'cleaner_id',
-        'schedule',
+        'timetable',
     ];
 
     /**
@@ -29,4 +26,12 @@ class Availability extends Model
      * @var array
      */
     protected $hidden = [];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function cleaner()
+    {
+        return $this->belongsTo(Cleaner::class);
+    }
 }

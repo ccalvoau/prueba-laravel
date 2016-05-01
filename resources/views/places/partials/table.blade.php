@@ -1,4 +1,4 @@
-<table id="tb_index_places" class="table table-bordered table-striped">
+<table id="tb_index_places" class="table table-bordered table-striped table-hover">
     <thead>
         <tr>
             <th>
@@ -17,7 +17,7 @@
     @foreach($places as $item)
         <tr data-id="{{ 'tr_place_'.$item->id }}">
             <td>
-                <a title="@lang('common.table_title_show')" href="{{ route('places.show', $item->id) }}">
+                <a title="@lang('common.table_title_show')" href="{{ route('places::show', $item->id) }}">
                     {{ $item->id }}
                 </a>
             </td>
@@ -45,6 +45,7 @@
             @if($item->verified)
                 <td title="{{ $item->cleaner->short_name }}">
                     <span class="label label-success">@lang('validation.attributes.tag_yes')</span>
+                    {{--<i class="icon fa fa-map-marker"></i>--}}
                 </td>
             @else
                 <td>
@@ -53,16 +54,26 @@
             @endif
 
             <td>
-                <a title="@lang('common.table_title_edit')" href="{{ url('places/'.$item->id.'/edit') }}" class="btn btn-primary btn-xs">
+                @if($item->status)
+                    <span class="label label-success">@lang('validation.attributes.tag_active')</span>
+                @else
+                    <span class="label label-danger">@lang('validation.attributes.tag_inactive')</span>
+                @endif
+            </td>
+
+            <td align="center">
+                <a title="@lang('common.table_title_edit')" href="{{ route('places::edit', ['id' => $item->id]) }}" class="btn btn-primary btn-xs">
                     <i class="fa fa-pencil"></i>
                 </a>
-                &nbsp;&nbsp;
+                &nbsp;
                 {!! Form::open([
                     'method'=>'DELETE',
-                    'route' => ['places.destroy', $item->id],
+                    'route' => ['places::destroy', $item->id],
                     'style' => 'display:inline'
                 ]) !!}
-                    <button type="submit" title="@lang('common.table_title_delete')" class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
+                    <button type="submit" title="@lang('common.table_title_delete')" class="btn btn-danger btn-xs">
+                        <i class="fa fa-remove"></i>
+                    </button>
                 {!! Form::close() !!}
             </td>
         </tr>

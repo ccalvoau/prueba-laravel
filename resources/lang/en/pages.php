@@ -13,18 +13,6 @@ return [
     */
 
     'auth' => [
-        'login_title'                   => '',
-        'login_description'             => '',
-
-        'register_title'                => '',
-        'register_description'          => '',
-
-        'password_title'                => '',
-        'password_description'          => '',
-
-        'reset_title'                   => '',
-        'reset_description'             => '',
-
-        'hello'                         => '',
+        
     ],
 ];

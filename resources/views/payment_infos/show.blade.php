@@ -1,7 +1,7 @@
 @extends('layout.master')
 
 @section('title')
-    @lang('common.company_name_capital') - @lang('payment_info.page_title')
+    @lang('common.company_name_capital') - @lang('validation.attributes.payment_info.page_title')
 @endsection
 
 @section('content')
@@ -22,16 +22,33 @@
                 <!-- Main content -->
                 <section class="content">
 
-                    <!-- box form elements -->
                     <div class="box box-solid box-primary">
 
                         <div class="box-header with-border">
-                            <h3 class="box-title">
+                            <div class="box-title">
                                 @lang('validation.attributes.payment_info.show_title_table'): {{ $payment_info->id }}
-                            </h3>
-                            <a href="{{ route('payment_infos.index') }}" class="btn btn-default pull-right btn-xs">
-                                @lang('validation.attributes.payment_info.button_list')
-                            </a>
+                            </div>
+                            <div class="pull-right">
+                                @if(Auth::user()->hasAnyRole([1,2]) || Auth::user()->hasAnyRole([3,4]))
+                                    <a href="{{ route('payment_infos::edit', ['id' => $payment_info->id]) }}" class="btn btn-default btn-xs">
+                                        <i class="fa fa-pencil"></i>
+                                        @lang('validation.attributes.payment_info.button_edit')
+                                    </a>
+                                    &nbsp;
+                                @endif
+                                @if(Auth::user()->hasAnyRole([1,2]))
+                                    <a href="{{ route('payment_infos::index') }}" class="btn btn-default btn-xs">
+                                        <i class="fa fa-navicon"></i>
+                                        @lang('validation.attributes.payment_info.button_list')
+                                    </a>
+                                @endif
+                                @if(Auth::user()->hasAnyRole([3,4]))
+                                    <a href="{{ route('payment_infos::display', [Auth::user()->cleaner_id]) }}" class="btn btn-default btn-xs">
+                                        <i class="fa fa-navicon"></i>
+                                        @lang('validation.attributes.payment_info.button_list')
+                                    </a>
+                                @endif
+                            </div>
                         </div><!-- /.box-header -->
 
                         <div class="box-body">
@@ -40,7 +57,7 @@
 
                         </div><!-- /.box-body -->
 
-                    </div><!-- /.box form elements -->
+                    </div>
 
                 </section>
                 <!-- /.content -->

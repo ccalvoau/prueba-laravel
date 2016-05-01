@@ -1,7 +1,7 @@
 @extends('layout.master')
 
 @section('title')
-    @lang('common.company_name_capital') - @lang('place.page_title')
+    @lang('common.company_name_capital') - @lang('validation.attributes.charts.page_title')
 @endsection
 
 @section('content')
@@ -22,6 +22,15 @@
 
                 <!-- Main content -->
                 <section class="content">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a class="btn btn-primary pull-right" href="{{asset('assets/pdf/manual/Gmail - Novus Cleaning Company - Forgotten Password Reset Link.pdf')}}" download="PDFNameHere.pdf">
+                                <i class="fa fa-download"></i> PDF Download
+                            </a>
+                            <hr />
+                        </div>
+                    </div>
+
                     <div class="row">
 
                         <div class="col-md-6">
@@ -308,7 +317,7 @@
             //-------------
 
             var barChartData = {
-                labels: {!! json_encode($labelsBarChart) !!},
+                labels: '{!! json_encode($labelsBarChart) !!}',
                 datasets: [
                     {
                         label: "Electronics",
@@ -318,7 +327,7 @@
                         pointStrokeColor: "#c1c7d1",
                         pointHighlightFill: "#fff",
                         pointHighlightStroke: "rgba(220,220,220,1)",
-                        data: {!! json_encode($valuesBarChart) !!}
+                        data: '{!! json_encode($valuesBarChart) !!}'
                     }
                 ]
             };

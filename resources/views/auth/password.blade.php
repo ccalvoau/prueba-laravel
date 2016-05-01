@@ -1,66 +1,87 @@
 @extends('layout_auth.auth')
 
 @section('title')
-	@lang('common.company_name_capital') - @lang('auth.login')
+	@lang('common.company_name_capital') - @lang('validation.attributes.auth.password_title')
 @endsection
 
 @section('content')
-	<!-- Content Header (Page header) -->
-	<section class="content-header">
-		<h1>
-            @lang('pages.auth.password_title')
-            <small>@lang('pages.auth.password_description')</small>
-		</h1>
-	</section>
 
-	<!-- Main content -->
-	<section class="content">
+    <div class="container-fluid" style="width: 65%">
+        <div class="row">
 
-        @include('layout_auth.partials.errors')
+            <div class="col-md-12">
 
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-md-8 col-md-offset-2">
-					<div class="panel panel-primary">
+                <!-- Content Header (Page header) -->
+                <section class="content-header">
+                    <h1>
+                        @lang('validation.attributes.auth.pt_auth')
+                        <small>@lang('validation.attributes.auth.pt_password')</small>
+                    </h1>
+                </section>
 
-						<div class="panel-heading">
-							@lang('auth.forgot_password_title')
-						</div>
+                <!-- Main content -->
+                <section class="content">
 
-						<div class="panel-body">
+                    @include('layout_auth.partials.flash_message')
 
-							@if (session('status'))
-								<div class="alert alert-success">
-									{{ session('status') }}
-								</div>
-							@endif
+                    @include('layout_auth.partials.errors')
 
-							<form class="form-horizontal" role="form" method="POST" action="{{ route('password') }}">
-								<input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    <div class="box box-solid box-primary">
 
-								<div class="form-group">
-									<label class="col-md-4 control-label">@lang('validation.attributes.email')</label>
-									<div class="col-md-6">
-										{!! Form::text('email', null, ['class' => 'form-control', 'type' => 'email']) !!}
-									</div>
-								</div>
+                        <div class="box-header with-border">
+                            @lang('validation.attributes.auth.password_title')
+                        </div>
 
-								<div class="form-group">
-									<div class="col-md-6 col-md-offset-4">
-										<button type="submit" class="btn btn-primary">
-											<i class="fa fa-envelope"></i>
-											@lang('auth.forgot_password_button')
-										</button>
-									</div>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-	<!-- /.content -->
+                        <div class="box-body">
+
+                            {!! Form::open(['route' => 'password', 'class' => 'form-horizontal', 'method' => 'POST', 'role' => 'form']) !!}
+
+                                <div class="form-group">
+                                    {!! Form::label('email', '* '.Lang::get('validation.attributes.auth.email').':', ['class' => 'col-sm-4 control-label']) !!}
+                                    <div class="col-sm-6">
+                                        <div class="input-group">
+                                            <div class="input-group-addon">
+                                                <i class="icon fa fa-envelope"></i>
+                                            </div>
+                                            {!! Form::text('email', Input::old('email'), [
+                                                'id' => 'email',
+                                                'placeholder' => Lang::get('validation.placeholders.email'),
+                                                'class' => 'form-control',
+                                                'type' => 'email',
+                                                'required' => 'required'
+                                                ])
+                                            !!}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr />
+
+                                <div class="form-group">
+                                    <div class="col-sm-6 col-sm-offset-4">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="icon fa fa-envelope"></i>
+                                            @lang('validation.attributes.auth.button_password')
+                                        </button>
+                                    </div>
+                                </div>
+
+                            {!! Form::close() !!}
+
+                        </div><!-- /.box-body -->
+
+                    </div>
+
+                </section>
+                <!-- /.content -->
+
+            </div>
+            <!-- /.column -->
+
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container -->
 @endsection
 
 @section('scripts')

@@ -2,9 +2,7 @@
 
 namespace Novus;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Size extends Model
+class Size extends MyBaseModel
 {
     /**
      * The database table used by the model.

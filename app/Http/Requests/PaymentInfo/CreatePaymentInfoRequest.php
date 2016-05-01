@@ -24,7 +24,11 @@ class CreatePaymentInfoRequest extends Request
     public function rules()
     {
         return [
-            //
+            'cleaner_id' => 'required|exists:cleaners,id',
+            'bank_id' => 'required|exists:banks,id',
+            'bsb' => 'required|min:6',
+            'account_number' => 'required|min:6|max:10',
+            'is_default' => 'required|in:true,false',
         ];
     }
 }

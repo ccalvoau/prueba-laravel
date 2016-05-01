@@ -2,9 +2,7 @@
 
 namespace Novus;
 
-use Illuminate\Database\Eloquent\Model;
-
-class PaymentInfo extends Model
+class PaymentInfo extends MyBaseModel
 {
     /**
      * The database table used by the model.
@@ -48,5 +46,18 @@ class PaymentInfo extends Model
     public function bank()
     {
         return $this->belongsTo(Bank::class);
+    }
+
+    /**
+     * Set the variable is_default into False before create new Payment Information
+     *
+     * @param $cleaner_id
+     */
+    public function setDefaultToFalse($cleaner_id)
+    {
+        // Updating is_default given a Cleaner
+        PaymentInfo::where('cleaner_id', $cleaner_id)
+            ->where('is_default', 'true')
+            ->update(['is_default' => false]);
     }
 }

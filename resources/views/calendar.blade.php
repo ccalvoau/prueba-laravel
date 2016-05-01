@@ -1,7 +1,7 @@
 @extends('layout.master')
 
 @section('title')
-    @lang('common.company_name_capital') - @lang('place.page_title')
+    @lang('common.company_name_capital') - @lang('validation.attributes.calendar.page_title')
 @endsection
 
 @section('content')

@@ -2,9 +2,7 @@
 
 namespace Novus;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Job extends Model
+class Job extends MyBaseModel
 {
     /**
      * The database table used by the model.
@@ -20,14 +18,14 @@ class Job extends Model
      */
     protected $fillable = [
         'client_id',
-        'clienttype_id',
+        'client_type_id',
         'place_id',
         'team_id',
         'quote_id',
         'job_date',
         'job_time',
         'description',
-        'statusjob_id',
+        'status_job_id',
         'no_hours',
         'price',
     ];

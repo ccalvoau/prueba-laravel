@@ -7,7 +7,7 @@
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel">
             <div class="pull-left image">
-                <img src="{{ asset('/assets/adminlte/dist/img/1-160x160.jpg') }}" class="img-circle" alt="User Image">
+                <img src="{{ asset('/assets/img/profile_pictures/'.Auth::user()->profile_picture) }}" class="img-circle" alt="{{ Auth::user()->name." Image" }}">
             </div>
             <div class="pull-left info">
                 @if(!Auth::guest())
@@ -20,97 +20,322 @@
 
         <!-- Sidebar Menu -->
         <ul class="sidebar-menu">
-            <li class="header">MAIN MENU</li>
-
-            <li class="treeview">
-                <a href="#">
-                    <i class="fa fa-user"></i> <span>Users</span>
-                    <i class="fa fa-angle-left pull-right"></i>
-                </a>
-                <ul class="treeview-menu">
-                    <li><a href="#"><i class="fa fa-user-plus"></i> Add User</a></li>
-                    <li><a href="#"><i class="fa fa-users"></i> List Users</a></li>
-                </ul>
+            <li class="header">
+                @lang('common.menu.menu')
             </li>
 
-            <li class="treeview">
-                <a href="{{ '/cleaners' }}">
-                    <i class="fa fa-arrow-circle-right"></i> <span>Cleaners</span>
-                </a>
-            </li>
+            @if(!Auth::guest())
 
-            <li class="treeview">
-                <a href="{{ '/payment_infos' }}">
-                    <i class="fa fa-arrow-circle-right"></i> <span>Payment Info</span>
-                </a>
-            </li>
+                @if(Auth::user()->hasAnyRole(1))
 
-            <li class="treeview">
-                <a href="{{ '/clients' }}">
-                    <i class="fa fa-arrow-circle-right"></i> <span>Clients</span>
-                </a>
-            </li>
-
-            <li class="treeview">
-                <a href="{{ '/places' }}">
-                    <i class="fa fa-arrow-circle-right"></i> <span>Places</span>
-                </a>
-            </li>
-
-            <li class="header"></li>
-
-            <li class="treeview">
-                <a href="#">
-                    <i class="fa fa-share"></i> <span>Menu Sample</span>
-                    <i class="fa fa-angle-left pull-right"></i>
-                </a>
-                <ul class="treeview-menu">
-                    <li><a href="{{ '/table' }}"><i class="fa fa-circle-o"></i> Table</a></li>
-                    <li><a href="{{ '/select' }}"><i class="fa fa-circle-o"></i> Select</a></li>
-                    <li><a href="{{ '/create' }}"><i class="fa fa-circle-o"></i> Create</a></li>
-                    <li><a href="{{ '/calendar' }}"><i class="fa fa-circle-o"></i> Calendar</a></li>
-                    <li>
-                        <a href="#"><i class="fa fa-circle-o"></i> Level 1 <i
-                                    class="fa fa-angle-left pull-right"></i></a>
+                    <li class="treeview">
+                        <a href="">
+                            <i class="fa fa-user"></i>
+                            <span>@lang('common.menu.users')</span>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </a>
                         <ul class="treeview-menu">
-                            <li><a href="#"><i class="fa fa-circle-o"></i> Level 2</a></li>
                             <li>
-                                <a href="#"><i class="fa fa-circle-o"></i> Level 2 <i
-                                            class="fa fa-angle-left pull-right"></i></a>
-                                <ul class="treeview-menu">
-                                    <li><a href="#"><i class="fa fa-circle-o"></i> Level 3</a></li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-circle-o"></i> Level 3 <i
-                                                    class="fa fa-angle-left pull-right"></i></a>
-                                        <ul class="treeview-menu">
-                                            <li><a href="#"><i class="fa fa-circle-o"></i> Level 4</a></li>
-                                            <li><a href="#"><i class="fa fa-circle-o"></i> Level 4</a></li>
-                                            <li><a href="#"><i class="fa fa-circle-o"></i> Level 4</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="#"><i class="fa fa-circle-o"></i> Level 3</a></li>
-                                </ul>
+                                <a href="{{ route('users::create') }}">
+                                    <i class="fa fa-user-plus"></i>
+                                    <span>@lang('common.menu.user_create')</span>
+                                </a>
                             </li>
-                            <li><a href="#"><i class="fa fa-circle-o"></i> Level 2</a></li>
+                            <li>
+                                <a href="{{ route('users::index') }}">
+                                    <i class="fa fa-users"></i>
+                                    <span>@lang('common.menu.user_index')</span>
+                                </a>
+                            </li>
                         </ul>
                     </li>
-                    <li><a href="#"><i class="fa fa-circle-o"></i> Level 1</a></li>
-                </ul>
-            </li>
 
-            <li class="header"></li>
+                @endif
 
-            <li class="treeview">
-                <a href="{{ '/quote' }}">
-                    <i class="fa fa-file-text"></i> <span>Quotes</span>
+                <li class="treeview">
+                    <a href="">
+                        <i class="fa fa-male"></i>
+                        <span>@lang('common.menu.cleaners')</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu">
+
+                        @if(Auth::user()->hasAnyRole([1,2]))
+                            <li>
+                                <a href="{{ route('cleaners::create') }}">
+                                    <i class="fa fa-user-plus"></i>
+                                    <span>@lang('common.menu.cleaner_create')</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('cleaners::index') }}">
+                                    <i class="fa fa-users"></i>
+                                    <span>@lang('common.menu.cleaner_index')</span>
+                                </a>
+                            </li>
+                        @endif
+
+                        @if(Auth::user()->hasAnyRole([3,4]))
+                            <li>
+                                <a href="{{ route('cleaners::edit', [Auth::user()->cleaner_id]) }}">
+                                    <i class="fa fa-pencil"></i>
+                                    <span>@lang('common.menu.cleaner_edit')</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('cleaners::show', [Auth::user()->cleaner_id]) }}">
+                                    <i class="fa fa-search"></i>
+                                    <span>@lang('common.menu.cleaner_show')</span>
+                                </a>
+                            </li>
+                        @endif
+
+                        @if(Auth::user()->hasAnyRole([1,3,4]))
+                            <li>
+                                <a href="">
+                                    <i class="fa fa-clock-o"></i>
+                                    <span>@lang('common.menu.availabilities')</span>
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </a>
+                                <ul class="treeview-menu">
+                                    <li>
+                                        <a href="{{ route('availabilities::edit', [Auth::user()->cleaner_id]) }}">
+                                            <i class="fa fa-pencil"></i>
+                                            <span>@lang('common.menu.availability_edit')</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        @endif
+
+                        <li>
+                            <a href="">
+                                <i class="fa fa-bank"></i>
+                                <span>@lang('common.menu.payment_infos')</span>
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li>
+                                    <a href="{{ route('payment_infos::create') }}">
+                                        <i class="fa fa-plus-square"></i>
+                                        <span>@lang('common.menu.payment_info_create')</span>
+                                    </a>
+                                </li>
+
+                                @if(Auth::user()->hasAnyRole([1,2]))
+                                <li>
+                                    <a href="{{ route('payment_infos::index') }}">
+                                        <i class="fa fa-navicon"></i>
+                                        <span>@lang('common.menu.payment_info_index')</span>
+                                    </a>
+                                </li>
+                                @endif
+
+                                @if(Auth::user()->hasAnyRole([3,4]))
+                                    <li>
+                                        <a href="{{ route('payment_infos::display', [Auth::user()->cleaner_id]) }}">
+                                            <i class="fa fa-navicon"></i>
+                                            <span>@lang('common.menu.payment_info_index')</span>
+                                        </a>
+                                    </li>
+                                @endif
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+
+                @if(Auth::user()->hasAnyRole([1,2]))
+
+                    <li class="treeview">
+                        <a href="">
+                            <i class="fa fa-user-secret"></i>
+                            <span>@lang('common.menu.clients')</span>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li>
+                                <a href="{{ route('clients::create') }}">
+                                    <i class="fa fa-plus-square"></i>
+                                    <span>@lang('common.menu.client_create')</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('clients::index') }}">
+                                    <i class="fa fa-navicon"></i>
+                                    <span>@lang('common.menu.client_index')</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="">
+                                    <i class="fa fa-map-marker"></i>
+                                    <span>@lang('common.menu.places')</span>
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </a>
+                                <ul class="treeview-menu">
+                                    <li>
+                                        <a href="{{ route('places::create') }}">
+                                            <i class="fa fa-plus-square"></i>
+                                            <span>@lang('common.menu.place_create')</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('places::index') }}">
+                                            <i class="fa fa-navicon"></i>
+                                            <span>@lang('common.menu.place_index')</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="treeview">
+                        <a href="{{ route('home') }}">
+                            <i class="fa fa-money"></i>
+                            <span>@lang('common.menu.payments')</span>
+                        </a>
+                    </li>
+
+                    <li class="treeview">
+                        <a href="">
+                            <i class="fa fa-users"></i>
+                            <span>@lang('common.menu.teams')</span>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li>
+                                <a href="{{ route('teams::create') }}">
+                                    <i class="fa fa-plus-square"></i>
+                                    <span>@lang('common.menu.team_create')</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('teams::index') }}">
+                                    <i class="fa fa-navicon"></i>
+                                    <span>@lang('common.menu.team_index')</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="treeview">
+                        <a href="">
+                            <i class="fa fa-truck"></i>
+                            <span>@lang('common.menu.vehicles')</span>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li>
+                                <a href="{{ route('vehicles::create') }}">
+                                    <i class="fa fa-plus-square"></i>
+                                    <span>@lang('common.menu.vehicle_create')</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('vehicles::index') }}">
+                                    <i class="fa fa-navicon"></i>
+                                    <span>@lang('common.menu.vehicle_index')</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                @endif
+
+                <li class="treeview">
+                    <a href="{{ route('home') }}">
+                        <i class="fa fa-gears"></i>
+                        <span>@lang('common.menu.jobs')</span>
+                    </a>
+                </li>
+
+                <li class="header"></li>
+
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-share"></i>
+                        <span>Others</span>
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li>
+                            <a href="{{ route('calendar') }}">
+                                <i class="fa fa-calendar"></i>
+                                <span>Calendar</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-circle-o"></i>
+                                <span>Level 1</span>
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li>
+                                    <a href="{{ route('contacts::create') }}">
+                                        <i class="fa fa-envelope"></i>
+                                        <span>Contact</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <i class="f     a fa-circle-o"></i>
+                                        <span>Level 2</span>
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                            </a>
+                                    <ul class="treeview-menu">
+                                        <li class="treeview">
+                                            <a href="{{ route('jobs::index') }}">
+                                                <i class="fa fa-file-text"></i>
+                                                <span>Quotes</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#"><i class="fa fa-circle-o"></i> Level 3 <i
+                                                        class="fa fa-angle-left pull-right"></i></a>
+                                            <ul class="treeview-menu">
+                                                <li><a href="#"><i class="fa fa-circle-o"></i> Level 4</a></li>
+                                                <li><a href="#"><i class="fa fa-circle-o"></i> Level 4</a></li>
+                                                <li><a href="#"><i class="fa fa-circle-o"></i> Level 4</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="#"><i class="fa fa-circle-o"></i> Level 3</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="{{ route('pdf') }}">
+                                        <i class="fa fa-file-pdf-o"></i>
+                                        <span>PDF</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="{{ route('charts') }}">
+                                <i class="fa fa-bar-chart"></i>
+                                <span>Charts</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="header"></li>
+
+                <li>
+                    <a href="{{ '/help' }}">
+                        <i class="fa fa-question-circle"></i>
+                        <span>@lang('common.menu.help')</span>
+                    </a>
+                </li>
+
+            @endif
+
+            <li>
+                <a href="{{ route('logout') }}">
+                    <i class="fa fa-sign-out"></i>
+                    <span>@lang('common.menu.logout')</span>
                 </a>
             </li>
-
-            <li class="header"></li>
-
-            <li><a href="{{ '/help' }}"><i class="fa fa-book"></i> <span>Help</span></a></li>
-
-            <li><a href="{{ route('logout') }}"><i class="fa fa-sign-out"></i> <span>Logout</span></a></li>
         </ul><!-- /.sidebar-menu -->
     </section>
     <!-- /.sidebar -->

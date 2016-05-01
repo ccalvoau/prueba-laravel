@@ -29,5 +29,12 @@ class Kernel extends HttpKernel
         'auth' => \Novus\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'guest' => \Novus\Http\Middleware\RedirectIfAuthenticated::class,
+
+        /*'superadmin' => \Novus\Http\Middleware\SuperAdmin::class,
+        'administrator' => \Novus\Http\Middleware\Administrator::class,
+        'leader' => \Novus\Http\Middleware\Leader::class,
+        'cleaner' => \Novus\Http\Middleware\Cleaner::class,*/
+
+        'roles' => \Novus\Http\Middleware\CheckRole::class,
     ];
 }

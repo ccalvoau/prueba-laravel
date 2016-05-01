@@ -7,8 +7,12 @@
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
-    <!-- Bootstrap 3.3.5 -->
+            <!-- Bootstrap 3.3.5 -->
     {!! Html::style('assets/adminlte/bootstrap/css/bootstrap.min.css') !!}
+            <!-- Font Awesome -->
+    {!! Html::style('https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css') !!}
+            <!-- Ionicons -->
+    {!! Html::style('https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css') !!}
             <!-- Theme style -->
     {!! Html::style('assets/adminlte/dist/css/AdminLTE.min.css') !!}
             <!-- AdminLTE Skin -->
@@ -23,25 +27,13 @@
     {!! Html::script('https://oss.maxcdn.com/respond/1.4.2/respond.min.js') !!}
     <![endif]-->
 </head>
-<!--
-BODY TAG OPTIONS:
-=================
-Apply one or more of the following classes to get the
-desired effect
-|---------------------------------------------------------|
-|LAYOUT OPTIONS | fixed                                   |
-|               | layout-boxed                            |
-|               | layout-top-nav                          |
-|               | sidebar-collapse                        |
-|               | sidebar-mini                            |
-|---------------------------------------------------------|
--->
+
 <body class="hold-transition skin-blue layout-top-nav">
 <div class="wrapper">
     <!-- Header -->
     @include('layout_auth.partials.header')
 
-            <!-- Full Width Column -->
+    <!-- Full Width Column -->
     <div class="content-wrapper">
         <div class="container">
 

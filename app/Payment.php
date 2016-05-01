@@ -2,9 +2,7 @@
 
 namespace Novus;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Payment extends Model
+class Payment extends MyBaseModel
 {
     /**
      * The database table used by the model.
@@ -19,8 +17,8 @@ class Payment extends Model
      * @var array
      */
     protected $fillable = [
-        'paymentinfo_id',
-        'cleanerjob_id',
+        'payment_info_id',
+        'cleaner_job_id',
         'amount',
         'payment_date',
     ];

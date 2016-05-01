@@ -2,9 +2,7 @@
 
 namespace Novus;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Team extends Model
+class Team extends MyBaseModel
 {
     /**
      * The database table used by the model.
@@ -26,7 +24,9 @@ class Team extends Model
         'cleaner_id4',
         'cleaner_id5',
         'cleaner_id6',
+        'vehicle_id',
         'description',
+        'status',
     ];
 
     /**
@@ -35,4 +35,60 @@ class Team extends Model
      * @var array
      */
     protected $hidden = [];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function leaderData()
+    {
+        return $this->belongsTo(Cleaner::class, 'leader');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function cleaner2()
+    {
+        return $this->belongsTo(Cleaner::class, 'cleaner_id2');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function cleaner3()
+    {
+        return $this->belongsTo(Cleaner::class, 'cleaner_id3');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function cleaner4()
+    {
+        return $this->belongsTo(Cleaner::class, 'cleaner_id4');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function cleaner5()
+    {
+        return $this->belongsTo(Cleaner::class, 'cleaner_id5');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function cleaner6()
+    {
+        return $this->belongsTo(Cleaner::class, 'cleaner_id6');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function vehicle()
+    {
+        return $this->belongsTo(Vehicle::class);
+    }
 }

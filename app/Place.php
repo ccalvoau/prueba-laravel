@@ -2,9 +2,7 @@
 
 namespace Novus;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Place extends Model
+class Place extends MyBaseModel
 {
     /**
      * The database table used by the model.
@@ -27,8 +25,11 @@ class Place extends Model
         'suburb',
         'state_id',
         'postcode',
-        'referencep',
+        'reference',
+        'status',
         'verified',
+        'latitude',
+        'longitude',
         'cleaner_id',
         'no_jobs',
     ];

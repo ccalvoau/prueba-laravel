@@ -2,17 +2,13 @@
 
 namespace Novus\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 use Novus\Http\Requests;
-use Novus\Http\Controllers\Controller;
 
 class HomeController extends Controller
 {
     /**
-     * Create a new controller instance.
+     * HomeController constructor.
      *
-     * @return void
      */
     public function __construct()
     {
@@ -26,7 +22,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        //return Make::view('home');
-        return view('home');
+        // Redirect to home View
+        return \View::make('home');
     }
 }

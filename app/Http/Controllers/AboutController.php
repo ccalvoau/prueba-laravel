@@ -2,24 +2,16 @@
 
 namespace Novus\Http\Controllers;
 
-use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Session;
+use Lang;
 use Novus\Http\Requests;
-use Novus\Http\Controllers\Controller;
 use Novus\Http\Requests\ContactFormRequest;
 
 class AboutController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
+    private $path = 'contacts';
+    private $email = '';
+    
     /**
      * Show the form for creating a new resource.
      *
@@ -27,7 +19,7 @@ class AboutController extends Controller
      */
     public function create()
     {
-        return view('contact');
+        return \View::make($this->path.'.contact');
     }
 
     /**
@@ -38,63 +30,27 @@ class AboutController extends Controller
      */
     public function store(ContactFormRequest $request)
     {
+        $this->email = $request->get('email');
+
+        // Setting $data to formatting the email
+        $data = array(
+            'name' => strtoupper($request->get('name')),
+            'email' => $this->email,
+            'user_message' => $request->get('user_message'),
+        );
+        
         \Mail::send('emails.contact',
-            array(
-                'name' => $request->get('name'),
-                'email' => $request->get('email'),
-                'user_message' => $request->get('message')
-            ), function ($message) {
-                //$message->from('novus@gmail.com');
-                $message->to('voxiro16@gmail.com', 'Admin');
-                $message->subject('Novus Feedback');
+            $data,
+            function ($message) {
+                $message->from('novus@gmail.com', Lang::get('validation.attributes.contact.email.from_description'));
+                $message->to( $this->email );
+                $message->subject(Lang::get('validation.attributes.contact.email.subject'));
             });
 
-        return \Redirect::route('contact')
-            ->with('message', 'Thanks for contacting us!');
-    }
+        // Showing flash message to the user
+        Session::flash('flash_message', Lang::get('validation.messages.email_sent'));
+        Session::flash('flash_type', 'success');
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        return \View::make($this->path.'.contact');
     }
 }

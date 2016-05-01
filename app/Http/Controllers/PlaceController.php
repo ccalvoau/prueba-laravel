@@ -3,6 +3,7 @@
 namespace Novus\Http\Controllers;
 
 use Illuminate\Support\Facades\Session;
+use Lang;
 use Novus\Client;
 use Novus\Http\Requests;
 use Novus\Http\Requests\Place\CreatePlaceRequest;
@@ -13,6 +14,17 @@ use Novus\StreetType;
 
 class PlaceController extends Controller
 {
+    private $path = 'places';
+    protected $instance;
+
+    /**
+     * PlaceController constructor.
+     */
+    public function __construct()
+    {
+        $this->instance = new Place();
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -26,7 +38,7 @@ class PlaceController extends Controller
         //dd($data);
 
         // Redirect to index View with the list
-        return \View::make('places.index', $data);
+        return \View::make($this->path.'.index', $data);
     }
 
     /**
@@ -42,21 +54,19 @@ class PlaceController extends Controller
         //dd($data);
 
         // Redirect to create View with $data
-        return \View::make('places.create', $data);
+        return \View::make($this->path.'.create', $data);
     }
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param CreatePlaceRequest $request
      * @return \Illuminate\Contracts\View\View
      */
     public function store(CreatePlaceRequest $request)
     {
-        $postcode = $request->get('postcode');
-        $postcode = trim($postcode) !== '' ? $postcode : null;
-        $referecep = $request->get('referecep');
-        $referecep = trim($referecep) !== '' ? $referecep : null;
+        $postcode = $this->instance->nullIfBlank($request->get('postcode'));
+		$reference = $this->instance->nullIfBlank($request->get('reference'));
 
         // Setting $data to create persist a new instance of an Object in DB
         $data_place = array(
@@ -68,8 +78,7 @@ class PlaceController extends Controller
             'suburb' => strtoupper($request->get('suburb')),
             'state_id' => $request->get('state_id'),
             'postcode' => $postcode,
-            'referecep' => $referecep,
-            'verified' => false,
+            'reference' => $reference,
         );
 
         //dd($data_place);
@@ -78,7 +87,8 @@ class PlaceController extends Controller
         $place = Place::create($data_place);
 
         // Showing flash message to the user
-        Session::flash('flash_message', 'Place: '.$place.' has been added successfully!');
+        Session::flash('flash_message', Lang::get('validation.messages.places.create'));
+        Session::flash('flash_type', 'success');
 
         // Setting the list in $data array
         $data = $this->listTable();
@@ -86,7 +96,7 @@ class PlaceController extends Controller
         //dd($data);
 
         // Redirect to index View with the list
-        return \View::make('places.index', $data);
+        return \View::make($this->path.'.index', $data);
     }
 
     /**
@@ -100,22 +110,20 @@ class PlaceController extends Controller
         // Searching the instance into DB given an ID
         $place = Place::findOrFail($id);
 
-        // Formatting the data from DB to the View
-
+		// Creating the Map
+        $map = $this->instance->displayMap($place->latitude, $place->longitude, $place->verified);
 
         // Setting $data to pass the data into the View
         $data = [
             'id' => $id,
             'place' => $place,
+            'map' => $map,
         ];
 
         //dd($data);
 
-        // Showing flash message to the user
-        //Session::flash('flash_message', 'Showing Place: '.$id.' successfully!');
-
         // Redirect to Show View with the $data
-        return \View::make('places.show', $data);
+        return \View::make($this->path.'.show', $data);
     }
 
     /**
@@ -129,11 +137,63 @@ class PlaceController extends Controller
         // Searching the instance into DB given an ID
         $place = Place::findOrFail($id);
 
-        // Formatting the data from DB to the View
+        // Searching for the data for populate the form
+        $data = $this->prepareForm();
+
+        // Setting $data to pass the data into the View
+        $data = array_add($data, 'id', $id);
+        $data = array_add($data, 'place', $place);
+
+        //dd($data);
+
+        // Redirect to Edit View with the $data
+        return \View::make($this->path.'.edit', $data);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param EditPlaceRequest $request
+     * @param $id
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function update(EditPlaceRequest $request, $id)
+    {
+		$postcode = $this->instance->nullIfBlank($request->get('postcode'));
+		$reference = $this->instance->nullIfBlank($request->get('reference'));
+
+        // Searching for the instance in DB
+        $place = Place::findOrFail($id);
+
+		// Setting $data to update an existent instance of an Object in DB
+        $data_place = array(
+            'client_id' => $request->get('client_id'),
+            'unit_number' => $request->get('unit_number'),
+            'street_number' => $request->get('street_number'),
+            'street_name' => strtoupper($request->get('street_name')),
+            'street_type_id' => $request->get('street_type_id'),
+            'suburb' => strtoupper($request->get('suburb')),
+            'state_id' => $request->get('state_id'),
+            'postcode' => $postcode,
+            'reference' => $reference,
+            'status' => $request->get('status'),
+        );
+
+        //dd($data_place);
+
+        // Filling the instance with the new $data
+        $place->fill($data_place);
+        // Updating the instance into DB
+        $place->save();
+
+        // Showing flash message to the user
+        Session::flash('flash_message', Lang::get('validation.messages.places.update'));
+        Session::flash('flash_type', 'success');
 
 
-        // Setting the relationship data
-
+        // METHOD edit
+        // Searching the instance into DB given an ID
+        $place = Place::findOrFail($id);
 
         // Searching for the data for populate the form
         $data = $this->prepareForm();
@@ -145,71 +205,7 @@ class PlaceController extends Controller
         //dd($data);
 
         // Redirect to Edit View with the $data
-        return \View::make('places.edit', $data);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     * 
-     * @param EditPlaceRequest $request
-     * @param $id
-     * @return \Illuminate\Contracts\View\View
-     */
-    public function update(EditPlaceRequest $request, $id)
-    {
-        $postcode = $request->get('postcode');
-        $postcode = trim($postcode) !== '' ? $postcode : null;
-        $referencep = $request->get('referencep');
-        $referencep = trim($referencep) !== '' ? $referencep : null;
-
-        // Setting $data to update an existent instance of an Object in DB
-        $data_place = array(
-            'client_id' => $request->get('client_id'),
-            'unit_number' => $request->get('unit_number'),
-            'street_number' => $request->get('street_number'),
-            'street_name' => strtoupper($request->get('street_name')),
-            'street_type_id' => $request->get('street_type_id'),
-            'suburb' => strtoupper($request->get('suburb')),
-            'state_id' => $request->get('state_id'),
-            'postcode' => $postcode,
-            'referencep' => $referencep,
-            'verified' => false,
-        );
-
-        //dd($data_place);
-
-        // Shearching for the instance in DB
-        $place = Place::findOrFail($id);
-        // Filling the instance with the new $data
-        $place->fill($data_place);
-        // Updating the instance into DB
-        $place->save();
-
-        // Showing flash message to the user
-        Session::flash('flash_message', 'Place: '.$id.' has been updated successfully!');
-
-
-        // METHOD edit
-        // Shearching the instance into DB given an ID
-        $place = Place::findOrFail($id);
-
-        // Formatting the data from DB to the View
-
-
-        // Setting the relationship data
-
-
-        // Shearching for the data for populate the form
-        $data = $this->prepareForm();
-
-        // Setting $data to pass the data into the View
-        $data = array_add($data, 'id', $id);
-        $data = array_add($data, 'place', $place);
-
-        //dd($data);
-
-        // Redirect to Edit View with the $data
-        return \View::make('places.edit', $data);
+        return \View::make($this->path.'.edit', $data);
     }
 
     /**
@@ -224,13 +220,14 @@ class PlaceController extends Controller
         Place::destroy($id);
 
         // Showing flash message to the user
-        Session::flash('flash_message', 'Place: '.$id.' has been deleted successfully!');
+        Session::flash('flash_message', Lang::get('validation.messages.places.destroy'));
+        Session::flash('flash_type', 'success');
 
         // Setting the list in $data array
         $data = $this->listTable();
 
         // Redirect to index View with the list
-        return \View::make('places.index', $data);
+        return \View::make($this->path.'.index', $data);
     }
 
     /**
@@ -248,7 +245,7 @@ class PlaceController extends Controller
         $data = [
             'places' => $places,
         ];
-        
+
         //dd($data);
 
         return $data;
@@ -262,14 +259,14 @@ class PlaceController extends Controller
     public function prepareForm()
     {
         // Searching for the data to populate the Form
-        $clients = Client::get()->pluck('short_name', 'id');
-        $street_types = StreetType::get()->pluck('name', 'id');
-        $states = State::get()->pluck('name', 'id');
+        $client = new Client();
+        $street_type = new StreetType();
+        $state = new State();
 
         // Adding default value to the list
-        $clients = array_add($clients, '', 'SELECT AN OPTION');
-        $street_types = array_add($street_types, '', 'SELECT AN OPTION');
-        $states = array_add($states, '', 'SELECT AN OPTION');
+        $clients = $client->getSelectList();
+        $street_types = $street_type->getSelectList();
+        $states = $state->getSelectList();
 
         // Setting the lists in $data array
         $data = [

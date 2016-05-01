@@ -2,9 +2,7 @@
 
 namespace Novus;
 
-use Illuminate\Database\Eloquent\Model;
-
-class StreetType extends Model
+class StreetType extends MyBaseModel
 {
     /**
      * The database table used by the model.
@@ -37,5 +35,19 @@ class StreetType extends Model
     public function place()
     {
         return $this->hasMany(Place::class);
+    }
+
+    /**
+     * Get the option list to populate the selects in the Forms
+     *
+     * @return mixed
+     */
+    public function getSelectList()
+    {
+        // Searching for the data to populate the Form
+        $option_list = StreetType::where('status', true)->get()->pluck('name', 'id');
+        // Adding default option to the list
+        $option_list = $this->addSelectAnOption($option_list);
+        return $option_list;
     }
 }

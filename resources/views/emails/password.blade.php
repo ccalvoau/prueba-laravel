@@ -16,33 +16,44 @@
             }
         </style>
     </head>
+
     <body>
         <div class="container">
             <div class="content">
-                <h3>@lang('passwords.email.title')</h3>
-                <p>@lang('passwords.email.hello'){{ $user->name }},</p>
-                <p>@lang('passwords.email.notify')</p>
-                <p>@lang('passwords.email.instruction')</p>
+                <h3>@lang('common.email.title')</h3>
+                <p>@lang('common.email.hello'){{ $user->name }},</p>
+                <p>@lang('passwords.email.password.notify')</p>
+                <p>@lang('passwords.email.password.instruction')</p>
+
                 <br/>
+
                 <div align="center">
-                    <a class="btn btn-primary" href="{{ $link = url('reset', $token).'?email='.urlencode($user->getEmailForPasswordReset()) }}">
-                        @lang('passwords.email.reset_button')
+                    <a class="btn btn-primary" href="{{ $link = route('reset/{token}/{email}', [$token, $user->getEmailForPasswordReset()]) }}">
+                        @lang('passwords.email.password.reset_button')
                     </a>
                 </div>
+
                 <br/>
-                <p>@lang('passwords.email.not_requested')</p>
-                <p>@lang('passwords.email.closing')</p>
+
+                <p>@lang('passwords.email.password.not_requested')</p>
+                <p>@lang('common.email.closing')</p>
+
                 <br/>
+
                 <div align="center">
-                    <b>@lang('passwords.email.signature')</b>
+                    <b>@lang('common.email.signature')</b>
                     <br/>
                     <br/>
                     <img src="{{ $message->embed( public_path() . '/assets/img/company_logo.png') }}" alt="@lang('common.company_name')" title="@lang('common.company_name')"/>
                 </div>
+
                 <hr/>
-                <p><b>@lang('passwords.email.postscript')</b> @lang('passwords.email.say_hello')</p>
+
+                <p><b>@lang('common.email.postscript')</b> @lang('common.email.say_hello')</p>
+
                 <hr/>
-                <p class="small">@lang('passwords.email.optional_link')</p>
+
+                <p class="small">@lang('passwords.email.password.optional_link')</p>
                 <a class="small" href="{{ $link }}"> {{ $link }} </a>
             </div>
         </div>

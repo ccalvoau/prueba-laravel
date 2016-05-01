@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'failed'   => 'Estas credenciales no coinciden con nuestros registros.',
+    'failed'   => 'Estas credenciales no coinciden con nuestros registros o el usuario esta actualmente INACTIVO.',
     'throttle' => 'Demasiados intentos de acceso. Por favor intente nuevamente en :seconds segundos.',
 
     'login'             => 'Login',

@@ -2,16 +2,14 @@
 
 namespace Novus;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Partcategory extends Model
+class PartCategory extends MyBaseModel
 {
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'partcategorys';
+    protected $table = 'part_categories';
 
     /**
      * The attributes that are mass assignable.

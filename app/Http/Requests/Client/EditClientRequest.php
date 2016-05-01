@@ -40,6 +40,8 @@ class EditClientRequest extends Request
             'last_name2' => 'alpha',
             'phone_number' => 'required|unique:clients,phone_number,' . $this->route->getParameter('id'),
             'email' => 'required|email|unique:clients,email,' . $this->route->getParameter('id'),
+            'description' => 'max:255',
+            'status' => 'required|in:TRUE,FALSE',
         ];
     }
 }

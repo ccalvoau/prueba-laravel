@@ -1,7 +1,7 @@
 @extends('layout.master')
 
 @section('title')
-    @lang('common.company_name_capital') - @lang('client.page_title')
+    @lang('common.company_name_capital') - @lang('validation.attributes.payment_info.page_title')
 @endsection
 
 @section('content')
@@ -14,40 +14,55 @@
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        @lang('validation.attributes.client.pt_client')
+                        @lang('validation.attributes.payment_info.pt_payment_info')
                         <small>- @lang('validation.attributes.pt_edit')</small>
                     </h1>
-
-                    @include('layout.partials.flash_message')
                 </section>
 
                 <!-- Main content -->
                 <section class="content">
 
+                    @include('layout.partials.flash_message')
+
                     @include('layout.partials.errors')
 
-                            <!-- box form elements -->
                     <div class="box box-solid box-primary">
 
                         <div class="box-header with-border">
-                            <h3 class="box-title">
-                                @lang('validation.attributes.client.edit_title_table'): {{ $client->id }}
-                            </h3>
-                            <a href="{{ route('clients.index') }}" class="btn btn-default pull-right btn-xs">
-                                @lang('validation.attributes.client.button_list')
-                            </a>
+                            <div class="box-title">
+                                @lang('validation.attributes.payment_info.edit_title_table'): {{ $payment_info->id }}
+                            </div>
+                            <div class="pull-right">
+                                <a href="{{ route('payment_infos::show', [$payment_info->id]) }}" class="btn btn-default btn-xs">
+                                    <i class="fa fa-search"></i>
+                                    @lang('validation.attributes.payment_info.button_show')
+                                </a>
+                                &nbsp;
+                                @if(Auth::user()->hasAnyRole([1,2]))
+                                    <a href="{{ route('payment_infos::index') }}" class="btn btn-default btn-xs">
+                                        <i class="fa fa-navicon"></i>
+                                        @lang('validation.attributes.payment_info.button_list')
+                                    </a>
+                                @endif
+                                @if(Auth::user()->hasAnyRole([3,4]))
+                                    <a href="{{ route('payment_infos::display', [Auth::user()->cleaner_id]) }}" class="btn btn-default btn-xs">
+                                        <i class="fa fa-navicon"></i>
+                                        @lang('validation.attributes.payment_info.button_list')
+                                    </a>
+                                @endif
+                            </div>
                         </div><!-- /.box-header -->
 
                         <div class="box-body">
 
-                            {!! Form::model($client, ['route' => ['clients.update', $id], 'class' => 'form-horizontal', 'method' => 'put']) !!}
+                            {!! Form::model($payment_info, ['route' => ['payment_infos::update', $id], 'class' => 'form-horizontal', 'method' => 'put']) !!}
 
-                                @include('clients.partials.fields')
+                            	@include('payment_infos.partials.fields_edit')
 
                                 <div class="col-md-12">
                                     <hr>
                                     <button type="submit" class="btn btn-block btn-primary">
-                                        @lang('validation.attributes.client.button_update')
+                                        @lang('validation.attributes.payment_info.button_update')
                                     </button>
                                 </div><!-- /.col12 -->
 
@@ -55,7 +70,7 @@
 
                         </div><!-- /.box-body -->
 
-                    </div><!-- /.box form elements -->
+                    </div>
 
                 </section>
                 <!-- /.content -->
@@ -75,20 +90,45 @@
 
     <!-- Select2 -->
     {!! Html::script('/assets/adminlte/plugins/select2/select2.full.min.js') !!}
-
     <!-- InputMask -->
     {!! Html::script('/assets/adminlte/plugins/input-mask/jquery.inputmask.js') !!}
     {!! Html::script('/assets/adminlte/plugins/input-mask/jquery.inputmask.date.extensions.js') !!}
     {!! Html::script('/assets/adminlte/plugins/input-mask/jquery.inputmask.extensions.js') !!}
 
     <!-- Page script -->
-    <script>
+    <script type="text/javascript">
         $(document).ready(function () {
             //Initialize Select2 Elements
-            $(".select2").select2();
+            var $option = '@lang('validation.attributes.select_an_option')';
+            $('#cleaner_id').select2({ placeholder: $option });
+            $('#bank_id').select2({ placeholder: $option });
+
+            if($('#h_cleaner_id').val() != "")
+            {
+                $('#cleaner_id').select2("enable",false);
+            }
 
             $("[data-mask]").inputmask();
+
+            $('.btn-toggle').click(function() {
+                $(this).find('.btn').toggleClass('active');
+                if ($(this).find('.btn-primary').size()>0) {
+                    $(this).find('.btn').toggleClass('btn-primary');
+                }
+                $(this).find('.btn').toggleClass('btn-default');
+            });
         });
+    </script>
+
+
+    <script type="text/javascript">
+        function setDefault() {
+            if ( $('#is_default').val() == "true" ){
+                $('#is_default').val(false);
+            } else {
+                $('#is_default').val(true);
+            }
+        }
     </script>
 
 @endsection

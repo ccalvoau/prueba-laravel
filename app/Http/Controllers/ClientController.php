@@ -3,6 +3,7 @@
 namespace Novus\Http\Controllers;
 
 use Illuminate\Support\Facades\Session;
+use Lang;
 use Novus\Client;
 use Novus\ClientType;
 use Novus\Http\Requests;
@@ -11,6 +12,17 @@ use Novus\Http\Requests\Client\EditClientRequest;
 
 class ClientController extends Controller
 {
+    private $path = 'clients';
+    protected $instance;
+
+    /**
+     * ClientController constructor.
+     */
+    public function __construct()
+    {
+        $this->instance = new Client();
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -24,7 +36,7 @@ class ClientController extends Controller
         //dd($data);
 
         // Redirect to index View with the list
-        return \View::make('clients.index', $data);
+        return \View::make($this->path.'.index', $data);
     }
 
     /**
@@ -40,7 +52,7 @@ class ClientController extends Controller
         //dd($data);
 
         // Redirect to create View with $data
-        return \View::make('clients.create', $data);
+        return \View::make($this->path.'.create', $data);
     }
 
     /**
@@ -51,12 +63,9 @@ class ClientController extends Controller
      */
     public function store(CreateClientRequest $request)
     {
-        $first_name2 = $request->get('first_name2');
-        $first_name2 = trim($first_name2) !== '' ? $first_name2 : null;
-        $last_name2 = $request->get('last_name2');
-        $last_name2 = trim($last_name2) !== '' ? $last_name2 : null;
-        $description = $request->get('description');
-        $description = trim($description) !== '' ? $description : null;
+        $first_name2 = $this->instance->nullIfBlankUpperCase($request->get('first_name2'));
+		$last_name2 = $this->instance->nullIfBlankUpperCase($request->get('last_name2'));
+		$description = $this->instance->nullIfBlank($request->get('description'));
 
         // Setting $data to create persist a new instance of an Object in DB
         $data_client = array(
@@ -65,7 +74,7 @@ class ClientController extends Controller
             'first_name2' => $first_name2,
             'last_name1' => strtoupper($request->get('last_name1')),
             'last_name2' => $last_name2,
-            'phone_number' => str_replace('-', ' ', $request->get('phone_number')),
+            'phone_number' => $request->get('phone_number'),
             'email' => strtolower($request->get('email')),
             'description' => $description,
         );
@@ -73,10 +82,11 @@ class ClientController extends Controller
         //dd($data_client);
 
         // Saving th instance into DB
-        $client = Client::create($data_client);
+        Client::create($data_client);
 
         // Showing flash message to the user
-        Session::flash('flash_message', 'Client '.$client.' has been added successfully!');
+        Session::flash('flash_message', Lang::get('validation.messages.clients.create'));
+        Session::flash('flash_type', 'success');
 
         // Setting the list in $data array
         $data = $this->listTable();
@@ -84,7 +94,7 @@ class ClientController extends Controller
         //dd($data);
 
         // Redirect to index View with the list
-        return \View::make('clients.index', $data);
+        return \View::make($this->path.'.index', $data);
     }
 
     /**
@@ -99,9 +109,6 @@ class ClientController extends Controller
         $client = Client::findOrFail($id);
         $places = $client->places;
 
-        // Formatting the data from DB to the View
-
-
         // Setting $data to pass the data into the View
         $data = [
             'id' => $id,
@@ -111,11 +118,8 @@ class ClientController extends Controller
 
         //dd($data);
 
-        // Showing flash message to the user
-        //Session::flash('flash_message', 'Showing Client '.$id.' successfully!');
-
         // Redirect to Show View with the $data
-        return \View::make('clients.show', $data);
+        return \View::make($this->path.'.show', $data);
     }
 
     /**
@@ -129,12 +133,6 @@ class ClientController extends Controller
         // Searching the instance into DB given an ID
         $client = Client::findOrFail($id);
 
-        // Formatting the data from DB to the View
-
-
-        // Setting the relationship data
-
-
         // Searching for the data for populate the form
         $data = $this->prepareForm();
 
@@ -145,7 +143,7 @@ class ClientController extends Controller
         //dd($data);
 
         // Redirect to Edit View with the $data
-        return \View::make('clients.edit', $data);
+        return \View::make($this->path.'.edit', $data);
     }
 
     /**
@@ -157,14 +155,14 @@ class ClientController extends Controller
      */
     public function update(EditClientRequest $request, $id)
     {
-        $first_name2 = $request->get('first_name2');
-        $first_name2 = trim($first_name2) !== '' ? $first_name2 : null;
-        $last_name2 = $request->get('last_name2');
-        $last_name2 = trim($last_name2) !== '' ? $last_name2 : null;
-        $description = $request->get('description');
-        $description = trim($description) !== '' ? $description : null;
+        $first_name2 = $this->instance->nullIfBlankUpperCase($request->get('first_name2'));
+		$last_name2 = $this->instance->nullIfBlankUpperCase($request->get('last_name2'));
+		$description = $this->instance->nullIfBlank($request->get('description'));
 
-        // Setting $data to update an existent instance of an Object in DB
+        // Searching for the instance in DB
+        $client = Client::findOrFail($id);
+
+		// Setting $data to update an existent instance of an Object in DB
         $data_client = array(
             'client_type_id' => $request->get('client_type_id'),
             'first_name1' => strtoupper($request->get('first_name1')),
@@ -174,32 +172,26 @@ class ClientController extends Controller
             'phone_number' => $request->get('phone_number'),
             'email' => strtolower($request->get('email')),
             'description' => $description,
+            'status' => $request->get('status'),
         );
 
         //dd($data_client);
 
-        // Shearching for the instance in DB
-        $client = Client::findOrFail($id);
         // Filling the instance with the new $data
         $client->fill($data_client);
         // Updating the instance into DB
         $client->save();
 
         // Showing flash message to the user
-        Session::flash('flash_message', 'Client '.$id.' has been updated successfully!');
+        Session::flash('flash_message', Lang::get('validation.messages.clients.update'));
+        Session::flash('flash_type', 'success');
 
 
         // METHOD edit
-        // Shearching the instance into DB given an ID
+        // Searching the instance into DB given an ID
         $client = Client::findOrFail($id);
 
-        // Formatting the data from DB to the View
-
-
-        // Setting the relationship data
-
-
-        // Shearching for the data for populate the form
+        // Searching for the data for populate the form
         $data = $this->prepareForm();
 
         // Setting $data to pass the data into the View
@@ -209,7 +201,7 @@ class ClientController extends Controller
         //dd($data);
 
         // Redirect to Edit View with the $data
-        return \View::make('clients.edit', $data);
+        return \View::make($this->path.'.edit', $data);
     }
 
     /**
@@ -224,13 +216,14 @@ class ClientController extends Controller
         Client::destroy($id);
 
         // Showing flash message to the user
-        Session::flash('flash_message', 'Client: '.$id.' has been deleted successfully!');
+        Session::flash('flash_message', Lang::get('validation.messages.clients.destroy'));
+        Session::flash('flash_type', 'success');
 
         // Setting the list in $data array
         $data = $this->listTable();
 
         // Redirect to index View with the list
-        return \View::make('clients.index', $data);
+        return \View::make($this->path.'.index', $data);
     }
 
     /**
@@ -243,7 +236,7 @@ class ClientController extends Controller
         // Searching the data
         $clients = Client::orderBy('id', 'ASC')
             ->get();
-        
+
         // Setting the list in $data array
         $data = [
             'clients' => $clients,
@@ -262,10 +255,10 @@ class ClientController extends Controller
     public function prepareForm()
     {
         // Searching for the data to populate the Form
-        $client_types = ClientType::get()->pluck('name', 'id');
+        $client_type = new ClientType();
 
         // Adding default value to the list
-        $client_types = array_add($client_types, '', 'SELECT AN OPTION');
+        $client_types = $client_type->getSelectList();
 
         // Setting the lists in $data array
         $data = [

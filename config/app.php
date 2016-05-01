@@ -144,6 +144,9 @@ return [
         Barryvdh\Snappy\ServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
         Fedeisas\LaravelMailCssInliner\LaravelMailCssInlinerServiceProvider::class,
+        Webpatser\Countries\CountriesServiceProvider::class,
+        Intervention\Image\ImageServiceProvider::class,
+        GeneaLabs\Phpgmaps\PhpgmapsServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -208,8 +211,9 @@ return [
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
         'PDF' => Barryvdh\Snappy\Facades\SnappyPdf::class,
-        'Image' => Barryvdh\Snappy\Facades\SnappyImage::class,
-
+        //'Image' => Barryvdh\Snappy\Facades\SnappyImage::class,
+        'Countries' => Webpatser\Countries\CountriesFacade::class,
+        'Image' => Intervention\Image\Facades\Image::class,
+        'Gmaps' => GeneaLabs\Phpgmaps\Facades\PhpgmapsFacade::class,
     ],
-
 ];

@@ -2,16 +2,14 @@
 
 namespace Novus;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Cleanerjob extends Model
+class CleanerJob extends MyBaseModel
 {
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'cleanerjobs';
+    protected $table = 'cleaner_jobs';
 
     /**
      * The attributes that are mass assignable.

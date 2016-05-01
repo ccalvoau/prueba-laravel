@@ -1,5 +1,8 @@
-<th title="@lang('validation.attributes.client.client_type')">
+<th>
     @lang('validation.attributes.client.name')
+</th>
+<th>
+    @lang('validation.attributes.client.client_type')
 </th>
 <th>
     @lang('validation.attributes.client.phone_number')

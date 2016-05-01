@@ -13,7 +13,6 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         Model::unguard();
-        $this->call(CreateTablePruebaSeeder::class);
 
         $this->command->info('<--- ******* --->');
         $this->command->info('Starting Seeding!');
@@ -49,11 +48,17 @@ class DatabaseSeeder extends Seeder
         $this->call(VehicleTableSeeder::class);
         $this->command->info('Vehicle Table seeded!');
 
-        $this->call(CleanerjobTableSeeder::class);
-        $this->command->info('Cleanerjob Table seeded!');
+        $this->call(CleanerJobTableSeeder::class);
+        $this->command->info('CleanerJob Table seeded!');
 
         $this->call(PaymentTableSeeder::class);
         $this->command->info('Payment Table seeded!');
+
+        //$this->call(CountriesSeeder::class);
+        //$this->command->info('Country Table seeded!');
+
+        $this->call(CountryTableSeeder::class);
+        $this->command->info('Country Table seeded!');
 
         Model::reguard();
     }

@@ -2,9 +2,7 @@
 
 namespace Novus;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Part extends Model
+class Part extends MyBaseModel
 {
     /**
      * The database table used by the model.
@@ -19,7 +17,7 @@ class Part extends Model
      * @var array
      */
     protected $fillable = [
-        'partcategory_id',
+        'part_category_id',
         'partid',
         'name',
         'description',

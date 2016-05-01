@@ -1,7 +1,11 @@
 @extends('layout.master')
 
 @section('title')
-    @lang('common.company_name_capital') - @lang('place.page_title')
+    @lang('common.company_name_capital') - @lang('validation.attributes.place.page_title')
+@endsection
+
+@section('map_js')
+    {!! $map['js'] !!}
 @endsection
 
 @section('content')
@@ -22,16 +26,23 @@
                 <!-- Main content -->
                 <section class="content">
 
-                            <!-- box form elements -->
                     <div class="box box-solid box-primary">
 
                         <div class="box-header with-border">
-                            <h3 class="box-title">
+                            <div class="box-title">
                                 @lang('validation.attributes.place.show_title_table'): {{ $place->id }}
-                            </h3>
-                            <a href="{{ route('places.index') }}" class="btn btn-default pull-right btn-xs">
-                                @lang('validation.attributes.place.button_list')
-                            </a>
+                            </div>
+                            <div class="pull-right">
+                                <a href="{{ route('places::edit', ['id' => $place->id]) }}" class="btn btn-default btn-xs">
+                                    <i class="fa fa-pencil"></i>
+                                    @lang('validation.attributes.place.button_edit')
+                                </a>
+                                &nbsp;
+                                <a href="{{ route('places::index') }}" class="btn btn-default btn-xs">
+                                    <i class="fa fa-navicon"></i>
+                                    @lang('validation.attributes.place.button_list')
+                                </a>
+                            </div>
                         </div><!-- /.box-header -->
 
                         <div class="box-body">
@@ -40,7 +51,7 @@
 
                         </div><!-- /.box-body -->
 
-                    </div><!-- /.box form elements -->
+                    </div>
 
                 </section>
                 <!-- /.content -->

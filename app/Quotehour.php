@@ -2,16 +2,14 @@
 
 namespace Novus;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Quotehour extends Model
+class QuoteHour extends MyBaseModel
 {
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'quotehours';
+    protected $table = 'quote_hours';
 
     /**
      * The attributes that are mass assignable.
@@ -19,7 +17,7 @@ class Quotehour extends Model
      * @var array
      */
     protected $fillable = [
-        'partcategory_id',
+        'part_category_id',
         'partid',
         'size_id',
         'duration',
