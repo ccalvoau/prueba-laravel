@@ -247,6 +247,13 @@ class PaymentInfoController extends Controller
         $data = array_add($data, 'id', $id);
         $data = array_add($data, 'payment_info', $payment_info);
 
+        $cleaner_id = '';
+        if(Auth::user()->hasAnyRole([3,4]))
+        {
+            $cleaner_id = Auth::user()->cleaner_id;
+        }
+        $data = array_add($data, 'cleaner_id', $cleaner_id);
+
         //dd($data);
 
         // Redirect to Edit View with the $data

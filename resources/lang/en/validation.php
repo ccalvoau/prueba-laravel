@@ -480,6 +480,42 @@ return [
             'button_update'             => 'Update',
             'button_show'               => 'Show Vehicle',
         ],
+
+        'job' => [
+            'pt_job'                    => 'JOB',
+            'page_title'                => 'Jobs',
+
+            'client_name'               => 'Client Name',
+            'client_type'               => 'Client Type',
+            'place'                     => 'Place',
+            'team_alias'                => 'Team',
+            'leader_name'               => 'Team Leader',
+            'job_date'                  => 'Job Date',
+            'date'                      => 'Date',
+            'job_time'                  => 'Job Time',
+            'time'                      => 'Time',
+            'quote'                     => 'Quote',
+            'price'                     => 'Price',
+            'no_hours'                  => 'No. Hours',
+            'previous_jobs'             => 'Previous Jobs',
+            'no_previous_jobs'          => 'There is not records of previous jobs for this Client in this Place.',
+            'description'               => 'Description',
+            'status'                    => 'Status',
+
+            'index_title_table'         => 'Jobs',
+            'button_add'                => 'Add a new Job',
+
+            'show_title_table'          => 'Showing Job',
+            'button_list'               => 'List Jobs',
+            'button_edit'               => 'Edit Job',
+
+            'create_title_table'        => 'Adding a new Job',
+            'button_create'             => 'Create',
+
+            'edit_title_table'          => 'Edit Job',
+            'button_update'             => 'Update',
+            'button_show'               => 'Show Job',
+        ],
     ],
 
 
@@ -535,6 +571,12 @@ return [
             'destroy'                   => 'The Vehicle has been deleted successfully!',
         ],
 
+        'jobs' => [
+            'create'                    => 'A new Job has been added successfully!',
+            'update'                    => 'The Job has been updated successfully!',
+            'destroy'                   => 'The Job has been deleted successfully!',
+        ],
+
         'email_sent'                => 'Your message has been sent successfully!',
     ],
 
@@ -553,7 +595,7 @@ return [
         'last_name'                 => 'LAST NAME',
         'last_name1'                => 'LAST NAME 1',
         'last_name2'                => 'LAST NAME 2',
-        'date'                      => 'XXX-XX-XX',
+        'date'                      => 'YYYY-MM-DD',
         'phone_number'              => 'XXXX XXX XXX',
         'tfn'                       => 'XXX XXX XXX',
         'abn'                       => 'XX XXX XXX XXX',
@@ -581,6 +623,9 @@ return [
 
         'bsb'                       => 'BSB',
         'account_number'            => 'ACCOUNT NUMBER',
+
+        'time'                      => 'HH:MM',
+        'leader_name'               => 'LEADER NAME',
     ],
 
     'modals' => [

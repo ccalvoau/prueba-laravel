@@ -240,14 +240,29 @@
                         </ul>
                     </li>
 
-                @endif
+                    <li class="treeview">
+                        <a href="">
+                            <i class="fa fa-gears"></i>
+                            <span>@lang('common.menu.jobs')</span>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li>
+                                <a href="{{ route('jobs::create') }}">
+                                    <i class="fa fa-plus-square"></i>
+                                    <span>@lang('common.menu.job_create')</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('jobs::index') }}">
+                                    <i class="fa fa-navicon"></i>
+                                    <span>@lang('common.menu.job_index')</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
 
-                <li class="treeview">
-                    <a href="{{ route('home') }}">
-                        <i class="fa fa-gears"></i>
-                        <span>@lang('common.menu.jobs')</span>
-                    </a>
-                </li>
+                @endif
 
                 <li class="header"></li>
 

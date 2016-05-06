@@ -78,16 +78,16 @@
     <div class="form-group" {{ $errors->has('is_default') ? 'has-error' : ''}}>
         {!! Form::label('is_default', '* '.Lang::get('validation.attributes.payment_info.is_default').':', ['class' => 'col-sm-4 control-label']) !!}
         <div class="col-sm-6">
-            <div id="div_set_default" class="btn-group btn-toggle">
-                <button type="button" class="btn btn-sm btn-primary active" onclick="setDefault();">
+            <div id="div_is_default" class="btn-group btn-toggle">
+                <button type="button" class="btn btn-sm btn-default" onclick="setDefault();">
                     @lang('validation.attributes.tag_yes')
                 </button>
-                <button type="button" class="btn btn-sm btn-default" onclick="setDefault();">
+                <button type="button" class="btn btn-sm btn-primary active" onclick="setDefault();">
                     @lang('validation.attributes.tag_no')
                 </button>
             </div>
-            {!! Form::text('set_default', Input::old('set_default'), [
-                'id' => 'set_default'
+            {!! Form::hidden('is_default', Input::old('is_default'), [
+                'id' => 'is_default'
                 ])
             !!}
         </div>

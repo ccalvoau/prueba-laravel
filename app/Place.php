@@ -72,4 +72,43 @@ class Place extends MyBaseModel
     {
         return $this->belongsTo(Cleaner::class);
     }
+
+    /**
+     * Get the option list to populate the selects in the Forms
+     *
+     * @return mixed
+     */
+    public function getAddressAttribute()
+    {
+        $address = "";
+        ($this->unit_number != '') ? $address = $address.$this->unit_number : $address;
+        ($this->street_number != '') ? $address = $address.', '.$this->street_number : $address;
+        ($this->street_name != '') ? $address = $address.' '.$this->street_name : $address;
+        ($this->street_type_id != '') ? $address = $address.' '.$this->streetType->name : $address;
+        ($this->suburb != '') ? $address = $address.', '.$this->suburb : $address;
+        ($this->state_id != '') ? $address = $address.', '.$this->state->name : $address;
+        ($this->postcode != '') ? $address = $address.', '.$this->postcode : $address;
+        return $address;
+    }
+
+    public function getAddressVerifiedAttribute()
+    {
+        $address = $this->getAddressAttribute();
+        ($this->verified) ? $address = $address.' - ('.\Lang::get('validation.attributes.place.verified').')' : $address;
+        return $address;
+    }
+    
+    /**
+     * Get the option list to populate the selects in the Forms
+     *
+     * @return mixed
+     */
+    public function getSelectListByClientId($client_id)
+    {
+        // Searching for the data to populate the Form
+        $option_list = Place::where('client_id', $client_id)->get()->pluck('address_verified', 'id');
+        // Adding default option to the list
+        $option_list = $this->addSelectAnOption($option_list);
+        return $option_list;
+    }
 }

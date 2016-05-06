@@ -130,13 +130,13 @@ class CreateTablesDB extends Migration
             $table->integer('client_type_id')->unsigned();
             $table->integer('place_id')->unsigned();
             $table->integer('team_id')->unsigned();
-            $table->integer('quote_id')->unsigned();
+            $table->integer('quote_id')->unsigned()->nullable();
             $table->date('job_date');
             $table->time('job_time');
             $table->text('description')->nullable();
             $table->integer('status_job_id')->unsigned();
             $table->integer('no_hours')->nullable();
-            $table->decimal('price', 3, 2)->nullable();
+            $table->decimal('price', 6, 2)->nullable();
             $table->timestamps();
         });
 

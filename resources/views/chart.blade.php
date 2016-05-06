@@ -317,7 +317,7 @@
             //-------------
 
             var barChartData = {
-                labels: '{!! json_encode($labelsBarChart) !!}',
+                labels: {!! json_encode($labelsBarChart) !!},
                 datasets: [
                     {
                         label: "Electronics",
@@ -327,7 +327,7 @@
                         pointStrokeColor: "#c1c7d1",
                         pointHighlightFill: "#fff",
                         pointHighlightStroke: "rgba(220,220,220,1)",
-                        data: '{!! json_encode($valuesBarChart) !!}'
+                        data: {!! json_encode($valuesBarChart) !!}
                     }
                 ]
             };

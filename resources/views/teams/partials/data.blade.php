@@ -5,7 +5,7 @@
                 @lang('validation.attributes.team.alias'):
             </td>
             <td class="td_data_values">
-                <span class="label bg-{{strtolower($team->alias)}}">{{ $team->alias }}</span>
+                {{ $team->alias }}
             </td>
         </tr>
 

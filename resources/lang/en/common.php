@@ -89,8 +89,11 @@ return [
         'vehicle_create'        => 'Add Vehicle',
         'vehicle_index'         => 'List Vehicles',
 
-        'payments'              => 'Payments',
         'jobs'                  => 'Jobs',
+        'job_create'            => 'Add Job',
+        'job_index'             => 'List Jobs',
+
+        'payments'              => 'Payments',
         
         'help'                  => 'Help',
         'logout'                => 'Logout',

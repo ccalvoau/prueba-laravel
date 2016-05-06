@@ -1,0 +1,21 @@
+<th>
+    @lang('validation.attributes.job.job_date')
+</th>
+<th>
+    @lang('validation.attributes.job.job_time')
+</th>
+<th>
+    @lang('validation.attributes.job.team_alias')
+</th>
+<th>
+    @lang('validation.attributes.job.leader_name')
+</th>
+<th>
+    @lang('validation.attributes.job.price')
+</th>
+<th>
+    @lang('validation.attributes.job.no_hours')
+</th>
+<th>
+    @lang('validation.attributes.job.status')
+</th>

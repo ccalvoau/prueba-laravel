@@ -86,7 +86,7 @@
                     @lang('validation.attributes.tag_no')
                 </button>
             </div>
-            {!! Form::text('is_default', Input::old('is_default'), [
+            {!! Form::hidden('is_default', Input::old('is_default'), [
                 'id' => 'is_default'
                 ])
             !!}

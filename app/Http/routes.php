@@ -250,6 +250,36 @@ Route::group(['middleware'=>['auth']], function () {
 
         // INDEX
         Route::get('/', ['uses'=>$controller_name.'@index', 'as'=>'index', 'roles'=>[1,2]]);
+        // CREATE
+        Route::get('/create', ['uses'=>$controller_name.'@create', 'as'=>'create', 'roles'=>[1,2]]);
+        // STORE
+        Route::post('/', ['uses'=>$controller_name.'@store', 'as'=>'store', 'roles'=>[1,2]]);
+        // SHOW
+        Route::get('/{id}', ['uses'=>$controller_name.'@show', 'as'=>'show', 'roles'=>[1,2]]);
+        // EDIT
+        Route::get('/{id}/edit', ['uses'=>$controller_name.'@edit', 'as'=>'edit', 'roles'=>[1,2]]);
+        // UPDATE
+        Route::put('/{id}/edit', ['uses'=>$controller_name.'@update', 'as'=>'update', 'roles'=>[1,2]]);
+        // DELETE
+        Route::delete('/{id}', ['uses'=>$controller_name.'@destroy', 'as'=>'destroy', 'roles'=>[1]]);
+
+        
+    });
+
+
+    /*AJAX*/
+    Route::group(['as'=>'ajax::', 'prefix'=>'ajax', 'middleware'=>'roles'], function() {
+        $controller_name = 'AjaxController';
+
+        // Get Places given client_id
+        Route::get('place/{client_id}/job.json', ['uses'=>$controller_name.'@getPlacesByClientId', 'as'=>'place/{client_id}/job.json', 'roles'=>[1,2]]);
+        // Get Client Type given client_id
+        Route::get('client_type/{client_id}/job.json', ['uses'=>$controller_name.'@getClientTypeByClientId', 'as'=>'client_type/{client_id}/job.json', 'roles'=>[1,2]]);
+        // Get Team Leader given team_id
+        Route::get('leader/{team_id}/job.json', ['uses'=>$controller_name.'@getLeaderByTeamId', 'as'=>'leader/{team_id}/job.json', 'roles'=>[1,2]]);
+        // Get Previous Jobs given client_id and place_id
+        Route::get('jobs/{client_id}/{place_id}/job.json', ['uses'=>$controller_name.'@getJobsByClientAndPlaceId', 'as'=>'jobs/{client_id}/{place_id}/job.json', 'roles'=>[1,2]]);
+
     });
 
     /*CALENDAR*/

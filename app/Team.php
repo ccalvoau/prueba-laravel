@@ -91,4 +91,29 @@ class Team extends MyBaseModel
     {
         return $this->belongsTo(Vehicle::class);
     }
+    
+    public function jobs()
+    {
+        return $this->hasMany(Job::class);
+    }
+
+    /**
+     * Get the option list to populate the selects in the Forms
+     *
+     * @return mixed
+     */
+    public function getSelectList()
+    {
+        // Searching for the data to populate the Form
+        $option_list = Team::where('status', true)->get()->pluck('alias', 'id');
+        // Adding default option to the list
+        $option_list = $this->addSelectAnOption($option_list);
+        return $option_list;
+    }
+
+    public function getLeaderByTeamId($id)
+    {
+        $team = Team::where('id', $id)->get()->first();
+        return $team->leaderData->full_name;
+    }
 }

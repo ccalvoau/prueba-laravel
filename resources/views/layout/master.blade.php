@@ -16,10 +16,6 @@
 
         @yield('css')
 
-                <!-- Daterange Picker -->
-        {!! Html::style('assets/adminlte/plugins/daterangepicker/daterangepicker-bs3.css') !!}
-                <!-- Bootstrap Datepicker -->
-        {!! Html::style('assets/adminlte/plugins/datepicker/datepicker3.css') !!}
                 <!-- Select2 -->
         {!! Html::style('assets/adminlte/plugins/select2/select2.min.css') !!}
                 <!-- iCheck for checkboxes and radio inputs -->
@@ -29,12 +25,15 @@
                 <!-- FullCalendar 2.2.5-->
         {!! Html::style('assets/adminlte/plugins/fullcalendar/fullcalendar.min.css') !!}
         {!! Html::style('assets/adminlte/plugins/fullcalendar/fullcalendar.print.css', ['media' => "print"]) !!}
+
+                <!-- Bootstrap -->
+        {!! Html::style('assets/adminlte/bootstrap/css/bootstrap.min.css') !!}
                 <!-- Datepicker -->
         {!! Html::style('assets/adminlte/plugins/datepicker/datepicker3.css') !!}
                 <!-- Daterange picker -->
         {!! Html::style('assets/adminlte/plugins/daterangepicker/daterangepicker-bs3.css') !!}
-                <!-- Bootstrap -->
-        {!! Html::style('assets/adminlte/bootstrap/css/bootstrap.min.css') !!}
+                <!-- TimePicker -->
+        {!! Html::style('assets/css/bootstrap-clockpicker.css') !!}
                 <!-- Bootstrap Switch-master -->
         {!! Html::style('assets/adminlte/plugins/bootstrap-switch-master/bootstrap-switch.css') !!}
 

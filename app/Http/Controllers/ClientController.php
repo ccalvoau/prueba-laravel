@@ -150,7 +150,7 @@ class ClientController extends Controller
      * Update the specified resource in storage.
      *
      * @param EditClientRequest $request
-     * @param $id
+     * @param int $id
      * @return \Illuminate\Contracts\View\View
      */
     public function update(EditClientRequest $request, $id)

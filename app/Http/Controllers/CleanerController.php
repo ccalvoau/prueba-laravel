@@ -98,7 +98,7 @@ class CleanerController extends Controller
 
         //dd($data_user);
 
-        // Saving the instance into DB
+		// Saving the instance into DB
         $user = User::create($data_user);
         $user_id = $user->id;
         $user_email = $user->email;
@@ -188,9 +188,9 @@ class CleanerController extends Controller
                 'cleaner' => $cleaner,
                 'payment_infos' => $payment_infos,
             ];
-    
+
             //dd($data);
-    
+
             // Redirect to Show View with the $data
             return \View::make($this->path.'.show', $data);
         }

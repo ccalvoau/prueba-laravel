@@ -2,6 +2,7 @@
 
 namespace Novus\Http\Controllers;
 
+use Auth;
 use Illuminate\Support\Facades\Session;
 use Lang;
 use Novus\Cleaner;
@@ -31,9 +32,6 @@ class UserController extends Controller
      */
     public function index()
     {
-        // Deleting flash message to the user
-        Session::forget('flash_message_danger');
-
         // Setting the list in $data array
         $data = $this->listTable();
 
@@ -99,12 +97,13 @@ class UserController extends Controller
             $data,
             function ($message) use ($user) {
                 $message->from('novus@gmail.com', Lang::get('validation.attributes.contact.email.from_description'));
-                $message->to( $user->email );
+                $message->to($user->email);
                 $message->subject(Lang::get('passwords.email.welcome.subject'));
-            });
+        });
 
         // Showing flash message to the user
         Session::flash('flash_message', Lang::get('validation.messages.users.create'));
+        Session::flash('flash_type', 'success');
 
         // Setting the list in $data array
         $data = $this->listTable();
@@ -123,26 +122,42 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        // Searching the instance into DB given an ID
-        $user = User::findOrFail($id);
-
-        // Formatting the data from DB to the View
-        if($user->role_id == 3 || $user->role_id == 4)
+        if(Auth::user()->hasAnyRole([1,2]))
         {
-            $cleaner = new Cleaner();
-            $user->cleaner_id = $cleaner->getCleanerIdByUserId($user->id);
+            // Deleting flash message to the user
+            Session::forget('flash_message');
+            Session::forget('flash_type');
+
+            // Searching the instance into DB given an ID
+            $user = User::findOrFail($id);
+
+            // Formatting the data from DB to the View
+            if($user->role_id == 3 || $user->role_id == 4)
+            {
+                $cleaner = new Cleaner();
+                $user->cleaner_id = $cleaner->getCleanerIdByUserId($user->id);
+            }
+
+            // Setting $data to pass the data into the View
+            $data = [
+                'id' => $id,
+                'user' => $user,
+            ];
+
+            //dd($data);
+
+            // Redirect to Show View with the $data
+            return \View::make($this->path.'.show', $data);
         }
-
-        // Setting $data to pass the data into the View
-        $data = [
-            'id' => $id,
-            'user' => $user,
-        ];
-
-        //dd($data);
-
-        // Redirect to Show View with the $data
-        return \View::make($this->path.'.show', $data);
+        else
+        {
+            // Showing flash message to the user
+            Session::flash('flash_message', Lang::get('validation.messages.no_permission'));
+            Session::flash('flash_type', 'danger');
+            
+            // Redirect to Show View with the $data
+            return \View::make('home');
+        }
     }
 
     /**
@@ -153,20 +168,36 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        // Searching the instance into DB given an ID
-        $user = User::findOrFail($id);
+        if(Auth::user()->hasAnyRole([1,2]))
+        {
+            // Deleting flash message to the user
+            Session::forget('flash_message');
+            Session::forget('flash_type');
 
-        // Searching for the data for populate the form
-        $data = $this->prepareForm("ALL");
+            // Searching the instance into DB given an ID
+            $user = User::findOrFail($id);
 
-        // Setting $data to pass the data into the View
-        $data = array_add($data, 'id', $id);
-        $data = array_add($data, 'user', $user);
+            // Searching for the data for populate the form
+            $data = $this->prepareForm("ALL");
 
-        //dd($data);
+            // Setting $data to pass the data into the View
+            $data = array_add($data, 'id', $id);
+            $data = array_add($data, 'user', $user);
 
-        // Redirect to Edit View with the $data
-        return \View::make($this->path.'.edit', $data);
+            //dd($data);
+
+            // Redirect to Edit View with the $data
+            return \View::make($this->path.'.edit', $data);
+        }
+        else
+        {
+            // Showing flash message to the user
+            Session::flash('flash_message', Lang::get('validation.messages.no_permission'));
+            Session::flash('flash_type', 'danger');
+
+            // Redirect to Show View with the $data
+            return \View::make('home');
+        }
     }
 
     /**
@@ -225,13 +256,6 @@ class UserController extends Controller
         $user->fill($data_user);
         // Updating the instance into DB
         $user->save();
-        /*
-        if($admin_to_cleaner)
-        {
-            $cleaner = new Cleaner();
-            $cleaner->updateAdminToCleaner($user->id);
-        }
-        */
         if($cleaner_to_admin)
         {
             $cleaner = new Cleaner();
@@ -240,17 +264,12 @@ class UserController extends Controller
 
         // Showing flash message to the user
         Session::flash('flash_message', Lang::get('validation.messages.users.update'));
+        Session::flash('flash_type', 'success');
 
 
         // METHOD edit
         // Searching the instance into DB given an ID
         $user = User::findOrFail($id);
-
-        // Formatting the data from DB to the View
-
-
-        // Setting the relationship data
-
 
         // Searching for the data for populate the form
         $data = $this->prepareForm("ALL");
@@ -302,7 +321,7 @@ class UserController extends Controller
         // Setting the lists in $data array
         $data = [
             'roles' => $roles,
-        ];
+        ]; 
 
         //dd($data);
 

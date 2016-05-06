@@ -98,6 +98,13 @@
     <!-- Page script -->
     <script type="text/javascript">
         $(document).ready(function () {
+            if($('#is_default').val()){
+                $('#is_default').val(true);
+                toogleButton( 'div_is_default' );
+            }else{
+                $('#is_default').val(false);
+            }
+
             //Initialize Select2 Elements
             var $option = '@lang('validation.attributes.select_an_option')';
             $('#cleaner_id').select2({ placeholder: $option });
@@ -128,6 +135,14 @@
             } else {
                 $('#is_default').val(true);
             }
+        }
+
+        function toogleButton( id ) {
+            $('#'+id).find('.btn').toggleClass('active');
+            if ($('#'+id).find('.btn-primary').size()>0) {
+                $('#'+id).find('.btn').toggleClass('btn-primary');
+            }
+            $('#'+id).find('.btn').toggleClass('btn-default');
         }
     </script>
 

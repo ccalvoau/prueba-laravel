@@ -106,4 +106,11 @@ class Client extends MyBaseModel
         $option_list = $this->addSelectAnOption($option_list);
         return $option_list;
     }
+
+
+    public function getClientTypeByClientId($id)
+    {
+        $client = Client::where('id', $id)->get()->first();
+        return $client->client_type_id;
+    }
 }

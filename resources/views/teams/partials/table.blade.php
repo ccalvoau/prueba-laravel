@@ -23,7 +23,7 @@
             </td>
 
             <td>
-                <span style="color:{{strtolower($item->alias)}}"><b>{{ $item->alias }}</b></span>
+                {{ $item->alias }}
             </td>
 
             <td>
